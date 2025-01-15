@@ -1,0 +1,21 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "JavaBlogApplication",
+            "request": "launch",
+            "mainClass": "it.ludo.JavaBlogApplication",
+            "projectName": "java-blog"
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-Main<java-blog>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "it.ludo.Main",
+            "projectName": "java-blog",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ]
+}

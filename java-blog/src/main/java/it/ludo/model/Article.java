@@ -1,6 +1,8 @@
 package it.ludo.model;
 
-import java.time.LocalDateTime;
+
+import java.time.LocalDate;
+
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -25,12 +27,12 @@ public class Article {
     private String title;
 
     @NotBlank(message = "Campo Obbligatorio")
-    @Column(nullable = false)
+    @Column(nullable = false, length = 10000)
     private String body;
 
     // @NotNull(message = "Campo Obbligatorio")
     @Column(nullable = false)
-    private LocalDateTime article_date;
+    private LocalDate article_date;
 
     @Column(nullable = false)
     private String image;
@@ -70,11 +72,11 @@ public class Article {
         this.body = body;
     }
 
-    public LocalDateTime getArticle_date() {
+    public LocalDate getArticle_date() {
         return article_date;
     }
 
-    public void setArticle_date(LocalDateTime article_date) {
+    public void setArticle_date(LocalDate article_date) {
         this.article_date = article_date;
     }
 

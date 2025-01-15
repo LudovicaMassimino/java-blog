@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang=en>
+
+<head>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+
+    <title>DETTAGLIO ARTICOLO</title>
+</head>
+
+<body>
+
+    <header class="sticky-top">
+        <!-- navbar -->
+
+        <nav class="navbar navbar-expand-lg nav-bg">
+            <div class="container-fluid">
+                <a class="navbar-brand" th:href="@{/home}">
+                    <img th:src="@{/img/LogoTitoloHomeCommon.png}" alt="Logo" class="navbar-logo" width="auto" /></a>
+                <div class="nav justify-content-end">
+                    <a class="btn btn-primary" href="#" role="button">Login</a>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container d-flex flex-column justify-content-center align-items-center">
+        <!-- CARD -->
+        <div class="content-box">
+            <div class="row justify-content-center">
+                <div class="col-sm-12 col-lg-8 mb-5">
+                    <h1 th:text="${article.title}"></h1>
+                    <hr>
+                    <div class="mt-3">
+                        <img th:src="@{${article.image}}" alt="Article Image" class="img-fluid">
+                    </div>
+                    <p class="mt-5" th:text="${article.body}" style="text-align: justify;"></p>
+                    <div class="d-flex align-items-end flex-column">
+                        <a href="/home" class="btn btn-secondary mt-5">Back to Articles</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+
+
+    <footer>
+    </footer>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
+
+</body>
+
+</html>

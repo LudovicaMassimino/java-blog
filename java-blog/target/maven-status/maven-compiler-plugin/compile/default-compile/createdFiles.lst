@@ -1,0 +1,8 @@
+it/ludo/repository/ArticleRepo.class
+it/ludo/model/Category.class
+it/ludo/JavaBlogApplication.class
+it/ludo/controller/IndexController.class
+it/ludo/model/User.class
+it/ludo/repository/UserRepo.class
+it/ludo/repository/CategoryRepo.class
+it/ludo/model/Article.class
