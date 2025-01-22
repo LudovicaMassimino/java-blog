@@ -18,6 +18,8 @@ a {
     width: 25%;
 }
 
+/* -------------------------------- */
+
 .navbar {
     display: flex;
     height: 100px;
@@ -41,6 +43,9 @@ main {
     background-color: white;
     padding: 20px;
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .card {
@@ -63,10 +68,10 @@ main {
 
 .btn-img {
     border-radius: 25px;
-    width: 45px; 
-    height: 20px; 
-    font-size: 9px; 
-    padding: 0; 
+    width: 45px;
+    height: 20px;
+    font-size: 9px;
+    padding: 0;
 }
 
 .bi-pinterest {
@@ -75,5 +80,23 @@ main {
 
 .card-body {
     padding-bottom: 0;
+    padding-right: 0;
+}
+
+.input-category {
+    width: auto;
+    /* min-width: fit-content; */
+    padding: 0.25rem 0.5rem;
+    border: 1px solid #ced4da;
+    border-radius: 0.25rem;
+}
+
+.row {
+    margin-right: 0;
+    margin-left: 0;
+}
+
+.row>* {
+    padding-left: 0;
     padding-right: 0;
 }

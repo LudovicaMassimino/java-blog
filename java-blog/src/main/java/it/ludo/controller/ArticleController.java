@@ -1,11 +1,13 @@
 package it.ludo.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import it.ludo.model.Article;
 import it.ludo.repository.ArticleRepo;
@@ -42,4 +44,31 @@ public class ArticleController {
         return "home/article-detail";
     }
 
+    @GetMapping("/dashboard/admin")
+    public String index(Model model, @RequestParam(name = "title", required = false) String title,
+            @RequestParam(name = "body", required = false) String body) {
+
+        List<Article> articles = new ArrayList<>();
+
+        if (title == null && body == null) {
+
+        articles = articleRepo.findAll();
+
+        } else if (title == null) {
+         articles = articleRepo.findByBodyContainingIgnoreCase(body);
+         } else {
+
+         articles = articleRepo.findByTitleContainingIgnoreCase(title);
+         }
+
+        model.addAttribute("list", articles);
+        return "dashboard/admin_dash";
+    }
+
+    @GetMapping("/article/{id}")
+    public String show(@PathVariable("id") Integer id, Model model) {
+        Article article = articleRepo.getReferenceById(id);
+        model.addAttribute("article", article);
+        return "home/article-detail";
+    }
 }
