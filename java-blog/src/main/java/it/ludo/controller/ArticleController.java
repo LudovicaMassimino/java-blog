@@ -165,7 +165,8 @@ public class ArticleController {
         if (imageFile != null && !imageFile.isEmpty()) {
             try {
                 // Usa un percorso stabile
-                String uploadDir = "src/main/resources/static/uploads/";
+                String uploadDir = System.getProperty("user.home") + "/uploads/";
+
 
                 // Crea la directory se non esiste
                 File uploadPath = new File(uploadDir);
