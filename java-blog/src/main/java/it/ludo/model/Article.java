@@ -1,7 +1,8 @@
 package it.ludo.model;
 
-
 import java.time.LocalDate;
+
+import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.Column;
@@ -12,6 +13,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import jakarta.validation.constraints.NotBlank;
 
 @Entity
@@ -36,6 +38,9 @@ public class Article {
 
     @Column(nullable = false)
     private String image;
+
+    @Transient
+    private MultipartFile imageFile;
 
     // @NotNull(message = "Campo Obbligatorio")
     @ManyToOne
@@ -86,6 +91,14 @@ public class Article {
 
     public void setImage(String image) {
         this.image = image;
+    }
+
+    public MultipartFile getImageFile() {
+        return imageFile;
+    }
+    
+    public void setImageFile(MultipartFile imageFile) {
+        this.imageFile = imageFile;
     }
 
     public User getAuthor() {
