@@ -48,13 +48,17 @@
             <img th:src="@{${article.image}}" alt="Paperella gialla" />
             <button class="btn btn-danger btn-img position-absolute m-2">
               <i class="bi bi-pinterest"></i>Salva</button>
-            <i class="bi bi-zoom-in position-absolute top-0 end-0 m-2 text-light"></i>
+            <div class="icon-box position-absolute top-0 end-0 m-2">
+              <i class="bi bi-search"></i>
+            </div>
             <div class="card-body">
               <h3 class="card-title" th:text="${article.title}"></h3>
               <p class="card-text text-muted">Published on: <span
                   th:text="${#temporals.format(article.article_date, 'dd/MM/yyyy')}"></span></p>
               <span class="badge badge-category bg-primary text-white" th:text="${article.category.name}"></span>
-              <p class="card-text mt-2" th:text="${article.body.length() > 100 ? #strings.substring(article.body, 0, 100) + '...' : article.body}"></p>
+              <p class="card-text mt-2"
+                th:text="${article.body.length() > 100 ? #strings.substring(article.body, 0, 100) + '...' : article.body}">
+              </p>
 
               <div class="d-flex align-items-end flex-column">
                 <a th:href="@{'/home/article/' + ${article.id}}" class="btn btn-success">Read more</a>
@@ -74,6 +78,7 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
     integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
     crossorigin="anonymous"></script>
+
 
 </body>
 

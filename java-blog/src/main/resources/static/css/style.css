@@ -78,6 +78,25 @@ main {
     margin-right: 3px;
 }
 
+.icon-box {
+    background-color: black;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.bi-search {
+    font-size: 11px;
+    line-height: 1;
+    font-weight: bolder;
+    color: white;
+    text-shadow: 0 0 1px white;
+    margin-top: 1px;
+}
+
 .card-body {
     padding-bottom: 0;
     padding-right: 0;
@@ -137,4 +156,10 @@ main {
 
 .form-label {
     font-weight: bold;
+}
+
+.img-fluid {
+    width: 300px;
+    height: 200px;
+    object-fit: cover;
 }

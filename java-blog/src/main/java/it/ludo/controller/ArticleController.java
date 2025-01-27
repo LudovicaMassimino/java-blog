@@ -142,7 +142,7 @@ public class ArticleController {
                 imageFile.transferTo(file);
 
                 // Aggiorna il campo immagine con il nuovo nome file
-                existingArticle.setImage(fileName);
+                existingArticle.setImage("uploads/" + fileName);
             } catch (IOException e) {
                 e.printStackTrace();
                 model.addAttribute("errorMessage", "Errore durante il caricamento dell'immagine.");
