@@ -134,3 +134,7 @@ main {
     border-color: #a6cdf9;
     border-width: 2px;
 }
+
+.form-label {
+    font-weight: bold;
+}

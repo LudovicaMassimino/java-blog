@@ -109,13 +109,14 @@ public class ArticleController {
     @GetMapping("/article/{id}/update")
     public String update(@PathVariable("id") Integer id, Model model) {
         model.addAttribute("article", articleRepo.getReferenceById(id));
+        model.addAttribute("category", categoryRepo.findAll());
 
         return "dashboard/dash_update";
     }
 
     @PostMapping("/article/{id}/update")
     public String Update(@PathVariable("id") Integer id, @Valid @ModelAttribute("article") Article articleForm,
-            BindingResult bindingresult,
+            BindingResult bindingresult, @RequestParam("imageFile") MultipartFile imageFile,
             Model model) {
 
         if (bindingresult.hasErrors()) {
@@ -126,6 +127,28 @@ public class ArticleController {
 
         existingArticle.setTitle(articleForm.getTitle());
         existingArticle.setBody(articleForm.getBody());
+        existingArticle.setCategory(articleForm.getCategory());
+
+        // Gestisci il caricamento dell'immagine, se presente
+        if (imageFile != null && !imageFile.isEmpty()) {
+            try {
+                String uploadDir = System.getProperty("user.home") + "/uploads/";
+                File uploadPath = new File(uploadDir);
+                if (!uploadPath.exists()) {
+                    uploadPath.mkdirs();
+                }
+                String fileName = imageFile.getOriginalFilename();
+                File file = new File(uploadDir + fileName);
+                imageFile.transferTo(file);
+
+                // Aggiorna il campo immagine con il nuovo nome file
+                existingArticle.setImage(fileName);
+            } catch (IOException e) {
+                e.printStackTrace();
+                model.addAttribute("errorMessage", "Errore durante il caricamento dell'immagine.");
+                return "/dashboard/dash_update";
+            }
+        }
 
         articleRepo.save(existingArticle);
 
@@ -166,7 +189,6 @@ public class ArticleController {
             try {
                 // Usa un percorso stabile
                 String uploadDir = System.getProperty("user.home") + "/uploads/";
-
 
                 // Crea la directory se non esiste
                 File uploadPath = new File(uploadDir);
