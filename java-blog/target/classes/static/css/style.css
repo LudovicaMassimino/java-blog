@@ -163,3 +163,10 @@ main {
     height: 200px;
     object-fit: cover;
 }
+
+.btn-logged {
+background-color: #3b7eca;
+font-weight: bold;
+font-size: larger;
+font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}

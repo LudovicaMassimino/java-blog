@@ -50,6 +50,8 @@ public class ArticleController {
     @GetMapping("/home")
     public String getArticles(Model model) {
         List<Article> articles = articleRepo.findAll();
+
+        
         model.addAttribute("list", articles);
 
         return "home/index";

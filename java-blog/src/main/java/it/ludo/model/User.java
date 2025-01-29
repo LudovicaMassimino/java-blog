@@ -31,7 +31,7 @@ public class User {
     private String password;
 
     @Column(nullable = false)
-    private String role; // admin o user
+    private String role; // ROLE_ADMIN o ROLE_USER
 
     @OneToMany(mappedBy = "author", cascade = CascadeType.ALL)
     @JsonManagedReference
