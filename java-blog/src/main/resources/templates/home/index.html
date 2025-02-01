@@ -27,16 +27,29 @@
             <th:block sec:authorize="isAuthenticated()">
               <th:block sec:authorize="hasRole('ROLE_ADMIN')">
                 <!-- Se l'admin è loggato, mostra il pulsante Logged as Admin -->
-                <button class="btn btn-logged">Logged as Admin</button>
-              </th:block>
-              <th:block sec:authorize="!hasRole('ROLE_ADMIN')">
-                <!-- Se l'utente è loggato ma non è admin, mostra un altro pulsante -->
-                <button class="btn btn-primary" disabled>Logged in</button>
+                <button class="btn btn-logged dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                  aria-expanded="false">
+                  <span class="light-text">Logged in as</span> <span class="text-user"
+                    th:text="${#strings.toUpperCase(loggedUser.substring(0,1)) + loggedUser.substring(1)}"></span>
+                </button>
+                <ul class="dropdown-menu">
+                  <li><a class="dropdown-item fs-5 mt-3" href="#">Profile</a></li>
+                  <li><a class="dropdown-item fs-5 my-2" th:href="@{/dashboard/admin}">My Dashboard</a></li>
+                  <div class="d-flex justify-content-center">
+                    <form th:action="@{/logout}" method="post">
+                      <button type="submit"
+                        class="d-flex justify-content-center rounded btn btn-outline-custom my-2 w-60">
+                        Logout
+                      </button>
+                    </form>
+                  </div>
+                </ul>
+
               </th:block>
             </th:block>
             <th:block sec:authorize="!isAuthenticated()">
               <!-- Se nessuno è loggato, mostra il pulsante di login -->
-              <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown"
+              <button class="btn btn-login dropdown-toggle" type="button" data-bs-toggle="dropdown"
                 aria-expanded="false">
                 Login
               </button>
@@ -45,21 +58,17 @@
                   <form th:action="@{/authentication}" method="post">
                     <div class="form-group stile-form">
                       <label for="username">Username</label>
-                      <input type="text" class="form-control stile-form mb-3" id="username" name="username"
+                      <input type="text" class="form-control mb-3 input-usn" id="username" name="username"
                         placeholder="username" required>
                     </div>
                     <div class="form-group stile-form">
                       <label for="password">Password</label>
-                      <input type="password" class="form-control stile-form" id="password" name="password"
+                      <input type="password" class="form-control input-psw" id="password" name="password"
                         placeholder="password" required>
                     </div>
                     <div th:if="${param.error}">
                       <p class="text-danger">Invalid username or password</p>
                     </div>
-                    <div th:if="${error}">
-                      <p class="text-danger" th:text="${error}"></p>
-                    </div>
-
                     <div class="d-flex justify-content-center">
                       <button type="submit"
                         class="d-flex justify-content-center rounded btn btn-outline-custom my-5 w-60">Login</button>
@@ -77,24 +86,37 @@
 
   <main class="container d-flex flex-column justify-content-center align-items-center">
     <div class="d-flex justify-content-center align-items-center mb-4 w-100">
-      <h5 class="me-3 mb-0">Filter Categories:</h5>
+      <h5 class="me-3 mb-0 filter-cat">Filter Categories:</h5>
       <div>
-        <a class="badge bg-primary" href="">All posts</a>
-        <a class="badge bg-info" href="">PHP</a>
-        <a class="badge bg-info" href="">JS</a>
-        <a class="badge bg-info" href="">Laravel</a>
-        <a class="badge bg-info" href="">Vue</a>
+        <a class="badge badge-cat" th:classappend="${selectedCategory == null} ? 'selected' : ''" th:href="@{/home}">All
+          posts</a>
+        <a class="badge badge-cat" th:classappend="${selectedCategory == 'Java'} ? 'selected' : ''"
+          th:href="@{/home?category=Java}">Java</a>
+        <a class="badge badge-cat" th:classappend="${selectedCategory == 'PHP'} ? 'selected' : ''"
+          th:href="@{/home?category=PHP}">PHP</a>
+        <a class="badge badge-cat" th:classappend="${selectedCategory == 'JS'} ? 'selected' : ''"
+          th:href="@{/home?category=JS}">JS</a>
+
+        <a class="badge badge-cat" th:classappend="${selectedCategory == 'Laravel'} ? 'selected' : ''"
+          th:href="@{/home?category=Laravel}">Laravel</a>
+
+        <a class="badge badge-cat" th:classappend="${selectedCategory == 'Vue'} ? 'selected' : ''"
+          th:href="@{/home?category=Vue}">Vue</a>
       </div>
     </div>
 
+
     <!-- CARD -->
-    <div class="content-box-article">
+    <div class="content-box-article mt-5">
+      <div th:if="${noArticles}" class="alert text-center text-white mt-3 fs-4">
+        No articles available for this category.
+      </div>
       <div class="row justify-content-center">
-        <div class="col-sm-12 col-lg-8 mb-5" th:each="article : ${list}">
+        <div class="col-sm-12 col-lg-8 my-5" th:each="article : ${list}">
           <div class="card">
             <img
               th:src="${#strings.startsWith(article.image, 'uploads/') ? '/' + article.image : '/img/' + article.image}"
-              alt="Article Image" class="img-fluid">
+              alt="Article Image" class="img-fluid border-bottom">
             <button class="btn btn-danger btn-img position-absolute m-2">
               <i class="bi bi-pinterest"></i>Salva</button>
             <div class="icon-box position-absolute top-0 end-0 m-2">

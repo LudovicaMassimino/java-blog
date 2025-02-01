@@ -14,6 +14,8 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -48,11 +50,26 @@ public class ArticleController {
     UserRepo userRepo;
 
     @GetMapping("/home")
-    public String getArticles(Model model) {
+    public String getArticles(@RequestParam(name = "category", required = false) String category, Model model) {
         List<Article> articles = articleRepo.findAll();
 
-        
+        if (category == null || category.isEmpty()) { // senza filtro mostra tutti gli articoli
+            articles = articleRepo.findAll();
+        } else {
+            articles = articleRepo.findByCategoryName(category); // filtra articoli per categoria
+        }
+
+        boolean noArticles = articles.isEmpty(); // se non ci sono art per quella cat
+
+        // Nome dell'utente loggato
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+
         model.addAttribute("list", articles);
+        model.addAttribute("category", categoryRepo.findAll());
+        model.addAttribute("selectedCategory", category);
+        model.addAttribute("noArticles", noArticles);
+        model.addAttribute("loggedUser", username);
 
         return "home/index";
     }
@@ -74,7 +91,8 @@ public class ArticleController {
 
     @GetMapping("/dashboard/admin")
     public String index(Model model, @RequestParam(name = "title", required = false) String title,
-            @RequestParam(name = "body", required = false) String body) {
+            @RequestParam(name = "body", required = false) String body,
+            @RequestParam(name = "category", required = false) String category) {
 
         List<Article> articles = new ArrayList<>();
 
@@ -89,7 +107,24 @@ public class ArticleController {
             articles = articleRepo.findByTitleContainingIgnoreCase(title);
         }
 
+        if (category == null || category.isEmpty()) { // senza filtro mostra tutti gli articoli
+            articles = articleRepo.findAll();
+        } else {
+            articles = articleRepo.findByCategoryName(category); // filtra articoli per categoria
+        }
+
+        boolean noArticles = articles.isEmpty(); // se non ci sono art per quella cat
+
+        // Nome dell'utente loggato
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+
         model.addAttribute("list", articles);
+        model.addAttribute("category", categoryRepo.findAll());
+        model.addAttribute("selectedCategory", category);
+        model.addAttribute("noArticles", noArticles);
+        model.addAttribute("loggedUser", username);
+
         return "dashboard/admin_dash";
     }
 

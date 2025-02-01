@@ -1,5 +1,6 @@
 package it.ludo.model;
 
+import java.util.List;
 import java.util.Set;
 
 import jakarta.persistence.CascadeType;
@@ -24,6 +25,9 @@ public class Category {
     @NotBlank(message = "Campo Obbligatorio")
     @Column(nullable = false)
     private String name;
+
+    @OneToMany(mappedBy = "category")
+    private List<Article> articles;
 
     // GETTER E SETTER
 

@@ -2,15 +2,10 @@ package it.ludo.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.ModelAndView;
-
 import jakarta.servlet.http.HttpServletRequest;
 
 @Controller
@@ -21,7 +16,7 @@ public class LoginController {
 
     @GetMapping("/login")
     public String loginForm() {
-        return "/home/login";
+        return "/home/index";
     }
 
     @PostMapping("/authentication")
@@ -30,9 +25,9 @@ public class LoginController {
             @RequestParam("password") String password,
             HttpServletRequest request) {
 
-        // Non hai bisogno di autenticare manualmente. La gestione dell'autenticazione avviene tramite Spring Security
-        return "redirect:/home"; // Successo, reindirizza alla pagina home
+        // Non ho bisogno di autenticare manualmente. La gestione dell'autenticazione
+        // avviene tramite Spring Security
+        return "redirect:/home/index"; // Successo, reindirizza alla pagina home
     }
 
 }
-

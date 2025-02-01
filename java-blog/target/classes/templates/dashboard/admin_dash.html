@@ -22,9 +22,33 @@
                 <a class="navbar-brand" th:href="@{/home}">
                     <img th:src="@{/img/LogoTitoloHomeCommon.png}" alt="Logo" class="navbar-logo" width="auto" /></a>
                 <div class="nav justify-content-end">
-                    <a class="btn btn-danger btn-sm me-2" href="#" role="button">Logout</a>
-                    <a class="btn btn-success btn-sm me-2" th:href="@{/home}" role="button">Home </a>
-                    <a class="btn btn-primary btn-sm" th:href="@{/dashboard/create}" role="button">New Post</a>
+                    <!-- Dropdown per il login -->
+                    <div class="dropdown">
+                        <th:block sec:authorize="isAuthenticated()">
+                            <th:block sec:authorize="hasRole('ROLE_ADMIN')">
+                                <!-- Se l'admin è loggato, mostra il pulsante Logged as Admin -->
+                                <button class="btn btn-logged dropdown-toggle me-3" type="button"
+                                    data-bs-toggle="dropdown" aria-expanded="false">
+                                    <span class="light-text">Logged in as</span> <span class="text-user"
+                                        th:text="${#strings.toUpperCase(loggedUser.substring(0,1)) + loggedUser.substring(1)}"></span>
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item fs-5 mt-3" href="#">Profile</a></li>
+                                    <div class="d-flex justify-content-center">
+                                        <form th:action="@{/logout}" method="post">
+                                            <button type="submit"
+                                                class="d-flex justify-content-center rounded btn btn-outline-custom my-2 w-60">
+                                                Logout
+                                            </button>
+                                        </form>
+                                    </div>
+                                </ul>
+                            </th:block>
+                        </th:block>
+                    </div>
+                    <button class="btn btn-success btn-sm me-3 fw-bolder fs-5" th:href="@{/home}" role="button">Home </button>
+                    <button class="btn btn-primary btn-sm me-2 fw-bold fs-5" th:href="@{/dashboard/create}" role="button">New
+                        Post</button>
                 </div>
             </div>
         </nav>
@@ -39,20 +63,30 @@
 
                 <!-- col sx -->
                 <div class="col-12 col-md-6 d-flex align-items-center">
-                    <h6 class="me-3 mb-0">Filter:</h6>
-                    <div class="d-flex">
-                        <span class="badge bg-primary me-1">All posts</span>
-                        <span class="badge bg-info me-1">PHP</span>
-                        <span class="badge bg-info me-1">JS</span>
-                        <span class="badge bg-info me-1">Laravel</span>
-                        <span class="badge bg-info">Vue</span>
+                    <h5 class="me-3 mb-0 filter-cat">Filter Categories:</h5>
+                    <div>
+                        <a class="badge badge-cat" th:classappend="${selectedCategory == null} ? 'selected' : ''"
+                            th:href="@{/dashboard/admin}">All
+                            posts</a>
+                        <a class="badge badge-cat" th:classappend="${selectedCategory == 'Java'} ? 'selected' : ''"
+                            th:href="@{/dashboard/admin?category=Java}">Java</a>
+                        <a class="badge badge-cat" th:classappend="${selectedCategory == 'PHP'} ? 'selected' : ''"
+                            th:href="@{/dashboard/admin?category=PHP}">PHP</a>
+                        <a class="badge badge-cat" th:classappend="${selectedCategory == 'JS'} ? 'selected' : ''"
+                            th:href="@{/dashboard/admin?category=JS}">JS</a>
+
+                        <a class="badge badge-cat" th:classappend="${selectedCategory == 'Laravel'} ? 'selected' : ''"
+                            th:href="@{/dashboard/admin?category=Laravel}">Laravel</a>
+
+                        <a class="badge badge-cat" th:classappend="${selectedCategory == 'Vue'} ? 'selected' : ''"
+                            th:href="@{/dashboard/admin?category=Vue}">Vue</a>
                     </div>
                 </div>
                 <!-- col dx -->
                 <div class="col-12 col-md-6">
                     <form class="d-flex justify-content-end align-items-center input-group ">
                         <input class="form-control-sm input-category" type="text" placeholder="New category name"
-                            aria-label="New category name"/>
+                            aria-label="New category name" />
                         <button class="btn btn-success btn-sm" type="submit">Save</button>
                     </form>
                 </div>
@@ -62,8 +96,19 @@
             <!-- BOX LISTA ARTICOLI -->
 
             <div class="row my-5 justify-content-center">
+                <div th:if="${noArticles}" class="alert text-white text-center mt-3 fs-4">
+                    <div class="content-box-article mt-5 d-flex mx-auto">
+                        No articles available for this category.
+                    </div>
+                </div>
                 <div class="col-12 col-md-11">
                     <table class="table">
+                        <thead>
+                            <tr class="fs-5">
+                                <th scope="col">Article</th>
+                                <th scope="col"></th>
+                            </tr>
+                        </thead>
                         <tbody>
                             <tr th:each="article : ${list}" class="fs-6 align-items-center">
                                 <td class="w-75">

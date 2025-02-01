@@ -10,6 +10,7 @@ import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import it.ludo.repository.UserRepo;
 
@@ -22,7 +23,7 @@ public class SecurityConfiguration {
                 .cors(cors -> cors.disable())
                 .authorizeHttpRequests(request -> request
 
-                        .requestMatchers("/login", "/home/article/{id}", "/home", "/resources/**", "img/**",
+                        .requestMatchers( "/home/article/{id}", "/home", "/home/**", "/resources/**", "img/**",
                                 "uploads/**", "/css/**")
                         .permitAll()
                         .requestMatchers("/article/admin/**").hasAuthority("ADMIN")
@@ -30,13 +31,13 @@ public class SecurityConfiguration {
                         .requestMatchers("/user/**").hasAnyAuthority("USER", "ADMIN")
                         .requestMatchers("/article/{id}/**").hasAnyAuthority("ADMIN", "USER")
                         .anyRequest().authenticated())
-                .formLogin(login -> login.loginPage("/login") // Pagina di login personalizzata
+                .formLogin(login -> login
                         .loginProcessingUrl("/authentication") // URL di elaborazione del login
-                        .defaultSuccessUrl("/home")
+                        .defaultSuccessUrl("/home", true)
                         .permitAll())
                 .logout(logout -> logout
                         .logoutUrl("/logout")
-                        .logoutSuccessUrl("/logout-success")
+                        .logoutSuccessUrl("/home")
                         .permitAll())
                 // Configura la pagina di errore per accesso negato
                 .exceptionHandling(exceptionHandling -> exceptionHandling

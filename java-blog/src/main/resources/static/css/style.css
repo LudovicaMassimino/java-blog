@@ -30,11 +30,16 @@ a {
 }
 
 body {
-    background-color: #b8b8b8;
+    background-color: #000000;
 }
 
 main {
     padding: 2rem 0;
+}
+
+.filter-cat {
+    color: #ffffff;
+    font-weight: normal;
 }
 
 .content-box-article {
@@ -46,6 +51,9 @@ main {
     display: flex;
     justify-content: center;
     align-items: center;
+    background: #700041;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .card {
@@ -150,8 +158,7 @@ main {
 }
 
 .stile-form {
-    border-color: #a6cdf9;
-    border-width: 2px;
+    border: 2px #a6cdf9;
 }
 
 .form-label {
@@ -164,9 +171,65 @@ main {
     object-fit: cover;
 }
 
-.btn-logged {
-background-color: #3b7eca;
-font-weight: bold;
-font-size: larger;
-font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+.btn-logged,
+.badge-cat {
+    background-color: #ffffff;
+    color: #000000;
+    border: 3px solid #80044c;
+}
+
+.btn-logged:hover,
+.btn-logged.show,
+.badge-cat:hover,
+.badge-cat.show,
+.badge-cat.selected {
+    background-color: #80044c;
+    color: #ffffff;
+}
+
+.light-text {
+    font-weight: normal;
+    font-size: medium;
+}
+
+.text-user {
+    font-weight: bold;
+    font-size: larger;
+}
+
+.dropdown-item {
+    font-weight: bold;
+}
+
+.dropdown-item:hover {
+    background-color: rgba(155, 35, 97, 0.499);
+    text-shadow: 0 0 5px rgba(255, 255, 255, 1);
+    font-weight: bold;
+    transition: text-shadow 0.1s ease-in-out, background-color 0.1s ease-in-out, color 0.1s ease-in-out;
+}
+
+.btn-login {
+    color: #ffffff;
+    background-color: #000000;
+    border: 5px solid #80044c;
+}
+
+.btn-login:hover,
+.btn-login.show {
+    color: #ffffff;
+    background-color: #80044c;
+    border: 5px solid #000000;
+}
+
+.dropdown-menu {
+    --bs-dropdown-link-active-bg: #80044c;
+}
+
+.dropdown-toggle::after {
+    display: none;
+}
+
+.input-usn,
+.input-psw {
+    border: 2px solid #a6cdf9 !important;
 }
