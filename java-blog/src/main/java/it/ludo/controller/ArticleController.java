@@ -201,9 +201,14 @@ public class ArticleController {
     @GetMapping("/dashboard/create")
     public String create(Model model) {
 
+        // Nome dell'utente loggato
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+
         model.addAttribute("article", new Article());
         model.addAttribute("users", userRepo.findAll());
         model.addAttribute("category", categoryRepo.findAll());
+        model.addAttribute("loggedUser", username);
 
         return "/dashboard/dash_create";
     }

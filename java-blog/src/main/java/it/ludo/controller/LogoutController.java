@@ -29,7 +29,7 @@ public class LogoutController {
 
 
 
-    // oppure si può fare con GET grazie alla gestione delle richieste di Spring Security
+    // funziona anche con GET grazie alla gestione delle richieste di Spring Security ma con POST best practice
     // @GetMapping("/logout")
     // public String logout(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
     //     if (authentication != null) {

@@ -29,26 +29,24 @@
                                 <!-- Se l'admin è loggato, mostra il pulsante Logged as Admin -->
                                 <button class="btn btn-logged dropdown-toggle me-3" type="button"
                                     data-bs-toggle="dropdown" aria-expanded="false">
-                                    <span class="light-text">Logged in as</span> <span class="text-user"
+                                    <span class="light-text">Logged in as</span><br> <span class="text-user"
                                         th:text="${#strings.toUpperCase(loggedUser.substring(0,1)) + loggedUser.substring(1)}"></span>
                                 </button>
-                                <ul class="dropdown-menu">
-                                    <li><a class="dropdown-item fs-5 mt-3" href="#">Profile</a></li>
-                                    <div class="d-flex justify-content-center">
+                                <ul class="dropdown-menu dropdown-menu-end">
+                                    <li><a class="dropdown-item my-2 fs-5 mt-3" href="#">My Profile</a></li>
+                                    <li>
                                         <form th:action="@{/logout}" method="post">
-                                            <button type="submit"
-                                                class="d-flex justify-content-center rounded btn btn-outline-custom my-2 w-60">
-                                                Logout
-                                            </button>
+                                            <button type="submit" class="dropdown-item my-2 fs-5 mt-3"></a> Logout</button>
                                         </form>
-                                    </div>
+                                    </li>
                                 </ul>
                             </th:block>
                         </th:block>
                     </div>
-                    <button class="btn btn-success btn-sm me-3 fw-bolder fs-5" th:href="@{/home}" role="button">Home </button>
-                    <button class="btn btn-primary btn-sm me-2 fw-bold fs-5" th:href="@{/dashboard/create}" role="button">New
-                        Post</button>
+                    <a class="btn btn-success btn-sm me-3 fw-bold fs-6 d-flex align-items-center" th:href="@{/home}"
+                        role="button">Back to<br>Home</a>
+                    <a class="btn btn-primary btn-sm me-2 fw-bold fs-6 d-flex align-items-center"
+                        th:href="@{/dashboard/create}" role="button">Create<br>New Post</a>
                 </div>
             </div>
         </nav>

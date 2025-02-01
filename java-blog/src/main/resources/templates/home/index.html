@@ -29,10 +29,10 @@
                 <!-- Se l'admin è loggato, mostra il pulsante Logged as Admin -->
                 <button class="btn btn-logged dropdown-toggle" type="button" data-bs-toggle="dropdown"
                   aria-expanded="false">
-                  <span class="light-text">Logged in as</span> <span class="text-user"
+                  <span class="light-text">Logged in as</span><br> <span class="text-user"
                     th:text="${#strings.toUpperCase(loggedUser.substring(0,1)) + loggedUser.substring(1)}"></span>
                 </button>
-                <ul class="dropdown-menu">
+                <ul class="dropdown-menu dropdown-menu-end">
                   <li><a class="dropdown-item fs-5 mt-3" href="#">Profile</a></li>
                   <li><a class="dropdown-item fs-5 my-2" th:href="@{/dashboard/admin}">My Dashboard</a></li>
                   <div class="d-flex justify-content-center">
