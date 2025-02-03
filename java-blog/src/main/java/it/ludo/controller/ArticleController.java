@@ -7,6 +7,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +26,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import it.ludo.model.Article;
+import it.ludo.model.Category;
 import it.ludo.repository.ArticleRepo;
 import it.ludo.repository.CategoryRepo;
 import it.ludo.repository.UserRepo;
@@ -35,6 +37,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestBody;
 
 @Controller
 @RequestMapping
@@ -119,13 +122,33 @@ public class ArticleController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
 
+        // Recupera tutte le categorie ordinate
+        List<Category> categories = categoryRepo.findAllByOrderByNameAsc();
+
         model.addAttribute("list", articles);
-        model.addAttribute("category", categoryRepo.findAll());
+        model.addAttribute("category", categories);
         model.addAttribute("selectedCategory", category);
         model.addAttribute("noArticles", noArticles);
         model.addAttribute("loggedUser", username);
 
         return "dashboard/admin_dash";
+    }
+
+    @PostMapping("/dashboard/admin")
+    public String addCategory(@RequestParam(name = "newCategory", required = false) String newCategory) {
+
+        if (newCategory != null && !newCategory.isEmpty()) {
+            // Controlla se la categoria esiste già
+            Category existingCategory = categoryRepo.findByName(newCategory);
+            if (existingCategory == null) {
+                // Se non esiste, crea una nuova categoria
+                Category newCat = new Category();
+                newCat.setName(newCategory);
+                categoryRepo.save(newCat); // Salva la nuova categoria nel database
+            }
+        }
+
+        return "redirect:/dashboard/admin";
     }
 
     @GetMapping("/article/{id}")

@@ -110,12 +110,25 @@ main {
     padding-right: 0;
 }
 
-.input-category {
+.input-cat {
     width: auto;
-    /* min-width: fit-content; */
+    height: 38px;
     padding: 0.25rem 0.5rem;
-    border: 1px solid #ced4da;
+    border: 3px solid #80044c;
     border-radius: 0.25rem;
+}
+
+.input-cat:focus {
+    border-color: #80044c !important;
+    box-shadow: 0 0 0 0.1rem rgba(253, 152, 211, 0.5);
+    outline: none;
+}
+
+
+.btn-outline-success {
+    background-color: #ffffff;
+    height: 38px;
+    border: 2px solid;
 }
 
 .row {
@@ -230,6 +243,8 @@ main {
 }
 
 .input-usn,
-.input-psw {
+.input-psw,
+.form-control,
+.form-select {
     border: 2px solid #a6cdf9 !important;
 }

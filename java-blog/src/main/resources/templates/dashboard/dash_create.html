@@ -68,7 +68,7 @@
 
                             <div class="mb-3 mt-5 stile-form">
                                 <label for="title" class="form-label">Title</label>
-                                <input name="title" type="text" class="form-control stile-form" id="title"
+                                <input name="title" type="text" class="form-control" id="title"
                                     placeholder="Post title" th:field="*{title}" th:errorClass="is-invalid">
                                 <div th:if="${#fields.hasErrors('title')}" class="invalid-feedback">
                                     <ul>
@@ -82,7 +82,7 @@
                             <div class="mb-3 stile-form">
                                 <label for="body" class="form-label">Content</label>
                                 <div class="mb-3">
-                                    <textarea class="form-control stile-form" placeholder="Write your content" id="body"
+                                    <textarea class="form-control" placeholder="Write your content" id="body"
                                         th:field="*{body}" rows="8" maxlength="800"
                                         th:errorClass="is-invalid"></textarea>
                                 </div>
@@ -98,7 +98,7 @@
                             <div class="mb-3 stile-form ">
                                 <label for="category" class="form-label w-50">Category </label>
                                 <select id="category" name="category" th:field="*{category.id}"
-                                    class="form-select stile-form mb-4">
+                                    class="form-select mb-4">
                                     <option value="" selected hidden>Open this select menu</option>
                                     <option th:each="category : ${category}" th:value="${category.id}"
                                         th:text="${category.name}"></option>
@@ -109,7 +109,7 @@
 
                             <div class="mb-3 mt-5 stile-form">
                                 <label for="imageFile" class="form-label">Image</label>
-                                <input name="imageFile" type="file" class="form-control stile-form" id="imageFile"
+                                <input name="imageFile" type="file" class="form-control" id="imageFile"
                                     placeholder="Nessun file selezionato" th:errorClass="is-invalid">
                                 <div th:if="${#fields.hasErrors('imageFile')}" class="invalid-feedback">
                                     <ul>
