@@ -44,7 +44,7 @@
                             </th:block>
                         </th:block>
                     </div>
-                    <a class="btn btn-success btn-sm me-2 fw-bold fs-6 d-flex align-items-center"
+                    <a class="btn btn-nav me-2 fw-bold d-flex align-items-center"
                         th:href="@{/dashboard/admin}" role="button">Back
                         to<br>
                         Dashboard</a>
@@ -109,8 +109,9 @@
 
                             <div class="mb-3 mt-5 stile-form">
                                 <label for="imageFile" class="form-label">Image</label>
+                                
                                 <input name="imageFile" type="file" class="form-control" id="imageFile"
-                                    placeholder="Nessun file selezionato" th:errorClass="is-invalid">
+                                    placeholder="No file selected" th:errorClass="is-invalid">
                                 <div th:if="${#fields.hasErrors('imageFile')}" class="invalid-feedback">
                                     <ul>
                                         <li th:each="err : ${#fields.errors('imageFile')}" th:text="${err}"></li>

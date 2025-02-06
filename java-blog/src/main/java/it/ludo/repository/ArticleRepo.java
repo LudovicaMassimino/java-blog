@@ -18,4 +18,12 @@ public interface ArticleRepo extends JpaRepository<Article, Integer> {
     List<Article> findByTitleContainingIgnoreCase(String title);
 
     List<Article> findByBodyContainingIgnoreCase(String body);
+
+    List<Article> findByAuthorUsername(String username);
+
+    List<Article> findByAuthorUsernameAndBodyContainingIgnoreCase(String username, String body);
+
+    List<Article> findByAuthorUsernameAndTitleContainingIgnoreCase(String username, String title);
+
+    List<Article> findByAuthorUsernameAndCategoryName(String username, String category);
 }

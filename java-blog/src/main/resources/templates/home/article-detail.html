@@ -6,6 +6,8 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
 
     <link rel="stylesheet" th:href="@{/css/style.css}">
 
@@ -22,34 +24,58 @@
                 <a class="navbar-brand" th:href="@{/home}">
                     <img th:src="@{/img/LogoTitoloHomeCommon.png}" alt="Logo" class="navbar-logo" width="auto" /></a>
                 <div class="nav justify-content-end">
-                    <a class="btn btn-primary btn-sm" href="#" role="button">Login</a>
+                    <!-- Dropdown per il login -->
+                    <div class="dropdown">
+                        <th:block sec:authorize="isAuthenticated()">
+                            <th:block sec:authorize="hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')">
+                                <!-- Se l'admin è loggato, mostra il pulsante Logged as Admin -->
+                                <button class="btn btn-logged dropdown-toggle me-3" type="button"
+                                    data-bs-toggle="dropdown" aria-expanded="false">
+                                    <span class="light-text">Logged in as</span><br> <span class="text-user"
+                                        th:text="${#strings.toUpperCase(loggedUser.substring(0,1)) + loggedUser.substring(1)}"></span>
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end">
+                                    <li><a class="dropdown-item my-2 fs-5 mt-3" href="#">My Profile</a></li>
+                                    <li>
+                                        <form th:action="@{/logout}" method="post">
+                                            <button type="submit" class="dropdown-item my-2 fs-5 mt-3"></a>
+                                                Logout</button>
+                                        </form>
+                                    </li>
+                                </ul>
+                            </th:block>
+                        </th:block>
+                    </div>
                 </div>
             </div>
         </nav>
     </header>
+
 
     <main class="container d-flex flex-column justify-content-center align-items-center">
         <!-- CARD -->
         <div class="content-box-update">
             <div class="row justify-content-center">
                 <div class="col-sm-12 col-lg-8 mb-5">
-                    <h1 th:text="${article.title}"></h1>
+                    <div class="d-flex align-items-start flex-column">
+
+                        <a th:href="${previousPage}" class="btn-back mt-5 mb-5">
+                            <i class="fa-solid fa-circle-arrow-left me-1"></i>
+                            <span
+                                th:text="${previousPage.contains('/dashboard/admin') ? 'Back to Dashboard' : 'Back to Articles'}"></span>
+                        </a>
+                    </div>
+                    <h1 th:text="${article.title}" class="text-center"></h1>
                     <hr>
                     <div class="mt-3 d-flex justify-content-center">
                         <img th:src="${#strings.startsWith(article.image, 'uploads/') ? '/' + article.image : '/img/' + article.image}"
-                            alt="Article Image" class="img-fluid">
+                            alt="Article Image" class="img-fluid mt-4">
                     </div>
-                    <p class="mt-5 fs-4" th:text="${article.body}" style="text-align: justify;"></p>
-                    <div class="d-flex align-items-end flex-column">
-                        <a th:href="${previousPage}" class="btn btn-secondary mt-5"
-                            th:text="${previousPage.contains('/dashboard/admin') ? 'Back to Dashboard' : 'Back to Articles'}">
-                            Back
-                        </a>
-                    </div>
+                    <p class="mt-5 fs-5" th:text="${article.body}" style="text-align: justify;"></p>
+
                 </div>
             </div>
         </div>
-
     </main>
 
 

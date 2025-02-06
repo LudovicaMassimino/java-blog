@@ -5,10 +5,12 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.security.Principal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
@@ -27,6 +29,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import it.ludo.model.Article;
 import it.ludo.model.Category;
+import it.ludo.model.User;
 import it.ludo.repository.ArticleRepo;
 import it.ludo.repository.CategoryRepo;
 import it.ludo.repository.UserRepo;
@@ -95,32 +98,51 @@ public class ArticleController {
     @GetMapping("/dashboard/admin")
     public String index(Model model, @RequestParam(name = "title", required = false) String title,
             @RequestParam(name = "body", required = false) String body,
-            @RequestParam(name = "category", required = false) String category) {
+            @RequestParam(name = "category", required = false) String category, Principal principal) {
+
+        // Utente loggato
+        String username = principal.getName();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        boolean isAdmin = authentication.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
 
         List<Article> articles = new ArrayList<>();
 
         if (title == null && body == null) {
 
-            articles = articleRepo.findAll();
+            if (isAdmin) {
+                articles = articleRepo.findAll();
 
+            } else {
+                // Assicurati di avere un metodo nel repository che filtra per autore
+                articles = articleRepo.findByAuthorUsername(username);
+            }
         } else if (title == null) {
-            articles = articleRepo.findByBodyContainingIgnoreCase(body);
+            // Se c'è solo il filtro sul body
+            if (isAdmin) {
+                articles = articleRepo.findByBodyContainingIgnoreCase(body);
+            } else {
+                articles = articleRepo.findByAuthorUsernameAndBodyContainingIgnoreCase(username, body);
+            }
         } else {
-
-            articles = articleRepo.findByTitleContainingIgnoreCase(title);
+            // Se c'è il filtro sul titolo
+            if (isAdmin) {
+                articles = articleRepo.findByTitleContainingIgnoreCase(title);
+            } else {
+                articles = articleRepo.findByAuthorUsernameAndTitleContainingIgnoreCase(username, title);
+            }
         }
 
-        if (category == null || category.isEmpty()) { // senza filtro mostra tutti gli articoli
-            articles = articleRepo.findAll();
-        } else {
-            articles = articleRepo.findByCategoryName(category); // filtra articoli per categoria
+        // Gestione del filtro per categoria
+        if (category != null && !category.isEmpty()) {
+            if (isAdmin) {
+                articles = articleRepo.findByCategoryName(category);
+            } else {
+                articles = articleRepo.findByAuthorUsernameAndCategoryName(username, category);
+            }
         }
 
         boolean noArticles = articles.isEmpty(); // se non ci sono art per quella cat
-
-        // Nome dell'utente loggato
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
 
         // Recupera tutte le categorie ordinate
         List<Category> categories = categoryRepo.findAllByOrderByNameAsc();
@@ -130,6 +152,7 @@ public class ArticleController {
         model.addAttribute("selectedCategory", category);
         model.addAttribute("noArticles", noArticles);
         model.addAttribute("loggedUser", username);
+        model.addAttribute("isAdmin", isAdmin);
 
         return "dashboard/admin_dash";
     }
@@ -153,7 +176,10 @@ public class ArticleController {
 
     @GetMapping("/article/{id}")
     public String show(@PathVariable("id") Integer id,
-            @RequestHeader(value = "Referer", required = false) String referer, Model model) {
+            @RequestHeader(value = "Referer", required = false) String referer, Model model, Principal principal) {
+
+        String username = principal.getName();
+        model.addAttribute("loggedUser", username);
         Article article = articleRepo.getReferenceById(id);
         model.addAttribute("article", article);
 
@@ -167,9 +193,13 @@ public class ArticleController {
     }
 
     @GetMapping("/article/{id}/update")
-    public String update(@PathVariable("id") Integer id, Model model) {
+    public String update(@PathVariable("id") Integer id, Model model, Principal principal) {
+
         model.addAttribute("article", articleRepo.getReferenceById(id));
         model.addAttribute("category", categoryRepo.findAll());
+
+        String username = principal.getName();
+        model.addAttribute("loggedUser", username);
 
         return "dashboard/dash_update";
     }
@@ -224,7 +254,7 @@ public class ArticleController {
     @GetMapping("/dashboard/create")
     public String create(Model model) {
 
-        // Nome dell'utente loggato
+        // Utente loggato
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
 
@@ -239,7 +269,8 @@ public class ArticleController {
     @PostMapping("/dashboard/create")
     public String create(@Valid @ModelAttribute("article") Article articleForm,
             BindingResult bindingResult,
-            Model model) {
+            Model model, Principal principal) {
+
         if (bindingResult.hasErrors()) {
             model.addAttribute("category", categoryRepo.findAll());
             return "/dashboard/dash_create";
@@ -247,6 +278,15 @@ public class ArticleController {
 
         if (articleForm.getArticle_date() == null) {
             articleForm.setArticle_date(LocalDate.now());
+        }
+
+        // Recupera il nome dell'utente loggato (sia che sia admin o user)
+        String username = principal.getName();
+        Optional<User> loggedUserOpt = userRepo.findByUsername(username);
+        if (loggedUserOpt.isPresent()) {
+            articleForm.setAuthor(loggedUserOpt.get());
+        } else {
+            throw new RuntimeException("Utente non trovato per username: " + username);
         }
 
         MultipartFile imageFile = articleForm.getImageFile();
@@ -270,7 +310,7 @@ public class ArticleController {
                 articleForm.setImage("uploads/" + fileName);
             } catch (IOException e) {
                 e.printStackTrace();
-                model.addAttribute("errorMessage", "Errore nel caricamento dell'immagine.");
+                model.addAttribute("errorMessage", "Image upload error.");
                 return "/dashboard/dash_create";
             }
         }

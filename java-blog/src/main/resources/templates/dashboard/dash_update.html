@@ -22,10 +22,30 @@
                 <a class="navbar-brand" th:href="@{/home}">
                     <img th:src="@{/img/LogoTitoloHomeCommon.png}" alt="Logo" class="navbar-logo" width="auto" /></a>
                 <div class="nav justify-content-end">
-                    <a class="btn btn-danger btn-sm me-2" href="#" role="button">Logout</a>
-                    <a class="btn btn-success btn-sm me-2" th:href="@{/dashboard/admin}" role="button">Post
-                        Dashboard</a>
-                    <a class="btn btn-primary btn-sm" th:href="@{/dashboard/create}" role="button">New Post</a>
+                    <!-- Dropdown per il login -->
+                    <div class="dropdown">
+                        <th:block sec:authorize="isAuthenticated()">
+                            <th:block sec:authorize="hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')">
+                                <!-- Se l'admin è loggato, mostra il pulsante Logged as Admin -->
+                                <button class="btn btn-logged dropdown-toggle me-3" type="button"
+                                    data-bs-toggle="dropdown" aria-expanded="false">
+                                    <span class="light-text">Logged in as</span><br> <span class="text-user"
+                                        th:text="${#strings.toUpperCase(loggedUser.substring(0,1)) + loggedUser.substring(1)}"></span>
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end">
+                                    <li><a class="dropdown-item my-2 fs-5 mt-3" href="#">My Profile</a></li>
+                                    <li>
+                                        <form th:action="@{/logout}" method="post">
+                                            <button type="submit" class="dropdown-item my-2 fs-5 mt-3"></a>
+                                                Logout</button>
+                                        </form>
+                                    </li>
+                                </ul>
+                            </th:block>
+                        </th:block>
+                    </div>
+                    <a class="btn btn-nav me-2 fw-bold fs-6 d-flex align-items-center"
+                        th:href="@{/dashboard/admin}" role="button">Post<br>Dashboard</a>
                 </div>
             </div>
         </nav>

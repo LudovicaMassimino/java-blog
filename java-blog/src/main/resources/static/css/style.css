@@ -96,13 +96,20 @@ main {
     align-items: center;
 }
 
-.bi-search {
+.bi-search-img {
     font-size: 11px;
     line-height: 1;
     font-weight: bolder;
     color: white;
     text-shadow: 0 0 1px white;
     margin-top: 1px;
+}
+
+
+
+.fa-magnifying-glass-plus {
+    mix-blend-mode: difference;
+    color: white;
 }
 
 .card-body {
@@ -125,7 +132,7 @@ main {
 }
 
 
-.btn-outline-success {
+.btn-save {
     background-color: #ffffff;
     height: 38px;
     border: 2px solid;
@@ -179,8 +186,8 @@ main {
 }
 
 .img-fluid {
-    width: 300px;
-    height: 200px;
+    width: 100%;
+    height: auto;
     object-fit: cover;
 }
 
@@ -227,6 +234,37 @@ main {
     border: 5px solid #80044c;
 }
 
+/* .btn-nav {
+    color: #ffffff;
+    border: 3px solid transparent;
+    background: radial-gradient(ellipse, rgba(112, 0, 65, 0.682) 1%, rgba(112, 0, 65, 0.4) 60%, rgba(253, 227, 242, 0) 100%);
+    box-shadow: 0 0 500px rgba(112, 0, 65, 0.6); 
+    transition: transform 0.2s ease-in-out, box-shadow 0.1s ease-in-out;
+} */
+
+/* .btn-nav:hover {
+    border: 3px solid #80044c;
+    color: #ffffff;
+    box-shadow: 0 0 500px rgba(112, 0, 65, 0.6);
+} */
+
+.btn-nav {
+    color: #000000;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease-in-out;
+    font-size: large;
+}
+
+.btn-nav:hover {
+    background: rgba(255, 255, 255, 0.3);
+    box-shadow: 0 0 15px rgba(128, 4, 76, 0.6);
+}
+
 .btn-login:hover,
 .btn-login.show {
     color: #ffffff;
@@ -247,4 +285,31 @@ main {
 .form-control,
 .form-select {
     border: 2px solid #a6cdf9 !important;
+}
+
+.btn-delete,
+.btn-update,
+.btn-show {
+    border: 2px solid;
+}
+
+.icon-scale {
+    transform: scale(1.25);
+    display: inline-block;
+}
+
+.img-modal {
+    object-fit: cover;
+    width: 100%;
+}
+
+.btn-back {
+    color: #80044c;
+    font-weight: bold;
+    font-size: larger;
+    text-shadow: 0 0 5px #a6cdf9;
+}
+
+.btn-back:hover {
+    
 }

@@ -26,10 +26,10 @@ public class SecurityConfiguration {
                         .requestMatchers( "/home/article/{id}", "/home", "/home/**", "/resources/**", "img/**",
                                 "uploads/**", "/css/**")
                         .permitAll()
-                        .requestMatchers("/article/admin/**").hasAuthority("ADMIN")
-                        .requestMatchers("/article/user/**").hasAuthority("USER")
-                        .requestMatchers("/user/**").hasAnyAuthority("USER", "ADMIN")
-                        .requestMatchers("/article/{id}/**").hasAnyAuthority("ADMIN", "USER")
+                        .requestMatchers("/article/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/article/user/**").hasRole("USER")
+                        .requestMatchers("/user/**").hasAnyRole("USER", "ADMIN")
+                        .requestMatchers("/article/{id}/**").hasAnyRole("ADMIN", "USER")
                         .anyRequest().authenticated())
                 .formLogin(login -> login
                         .loginProcessingUrl("/authentication") // URL di elaborazione del login
