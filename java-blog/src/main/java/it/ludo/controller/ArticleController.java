@@ -86,6 +86,11 @@ public class ArticleController {
         Article article = articleRepo.getReferenceById(id);
         model.addAttribute("article", article);
 
+        // Nome dell'utente loggato
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        model.addAttribute("loggedUser", username);
+
         // Determina la pagina di origine
         if (referer != null && (referer.contains("/home") || referer.contains("/dashboard/admin"))) {
             model.addAttribute("previousPage", referer);
@@ -338,4 +343,15 @@ public class ArticleController {
         }
     }
 
+    @GetMapping("/profile")
+    public String getProfile(Model model, Principal principal) {
+
+        // Utente loggato
+        String username = principal.getName();
+
+        model.addAttribute("loggedUser", username);
+
+        return "home/profile";
+
+    }
 }

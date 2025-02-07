@@ -57,6 +57,7 @@ main {
 }
 
 .card {
+    width: 100%;
     background-color: #ffffff;
     border: 1px solid #ddd;
     border-radius: 8px;
@@ -64,11 +65,8 @@ main {
 }
 
 .card img {
-    width: 100%;
-    height: auto;
-    display: block;
+    width: 800px;
     margin: 0 auto;
-    object-fit: cover;
     margin-bottom: 20px;
     border-top-left-radius: 8px;
     border-top-right-radius: 8px;
@@ -123,6 +121,12 @@ main {
     padding: 0.25rem 0.5rem;
     border: 3px solid #80044c;
     border-radius: 0.25rem;
+}
+
+.input-cat:hover {
+    border-color: #80044c !important;
+    box-shadow: 0 0 0 0.1rem rgba(253, 152, 211, 0.5);
+    outline: none;
 }
 
 .input-cat:focus {
@@ -311,5 +315,6 @@ main {
 }
 
 .btn-back:hover {
-    
+    transition: transform 0.3s ease-in-out;
+    transform: translateY(-3px) scale(1.05);
 }

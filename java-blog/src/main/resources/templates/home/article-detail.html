@@ -17,39 +17,73 @@
 <body>
 
     <header class="sticky-top">
-        <!-- navbar -->
-
-        <nav class="navbar navbar-expand-lg nav-bg">
-            <div class="container-fluid">
-                <a class="navbar-brand" th:href="@{/home}">
-                    <img th:src="@{/img/LogoTitoloHomeCommon.png}" alt="Logo" class="navbar-logo" width="auto" /></a>
-                <div class="nav justify-content-end">
-                    <!-- Dropdown per il login -->
-                    <div class="dropdown">
-                        <th:block sec:authorize="isAuthenticated()">
-                            <th:block sec:authorize="hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')">
-                                <!-- Se l'admin è loggato, mostra il pulsante Logged as Admin -->
-                                <button class="btn btn-logged dropdown-toggle me-3" type="button"
-                                    data-bs-toggle="dropdown" aria-expanded="false">
-                                    <span class="light-text">Logged in as</span><br> <span class="text-user"
-                                        th:text="${#strings.toUpperCase(loggedUser.substring(0,1)) + loggedUser.substring(1)}"></span>
-                                </button>
-                                <ul class="dropdown-menu dropdown-menu-end">
-                                    <li><a class="dropdown-item my-2 fs-5 mt-3" href="#">My Profile</a></li>
-                                    <li>
-                                        <form th:action="@{/logout}" method="post">
-                                            <button type="submit" class="dropdown-item my-2 fs-5 mt-3"></a>
-                                                Logout</button>
-                                        </form>
-                                    </li>
-                                </ul>
-                            </th:block>
-                        </th:block>
-                    </div>
-                </div>
+        <!-- Navbar -->
+        <nav class="navbar nav-bg">
+          <div class="container-fluid">
+            <a class="navbar-brand" th:href="@{/home}">
+              <img th:src="@{/img/LogoTitoloHomeCommon.png}" alt="Logo" class="navbar-logo" width="auto" />
+            </a>
+            <div class="nav justify-content-end">
+              <!-- Dropdown per il login -->
+              <div class="dropdown">
+                <th:block sec:authorize="isAuthenticated()">
+                  <th:block sec:authorize="hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')">
+                    <!-- Se l'utente è loggato, mostra il pulsante Logged in as nomeUtente -->
+                    <button class="btn btn-logged dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                      aria-expanded="false">
+                      <span class="light-text">Logged in as</span><br> <span class="text-user"
+                        th:text="${#strings.toUpperCase(loggedUser.substring(0,1)) + loggedUser.substring(1)}"></span>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                      <li><a class="dropdown-item fs-5 mt-3" th:href="@{/profile}">Profile</a></li>
+                      <li><a class="dropdown-item fs-5 my-2" th:href="@{/dashboard/admin}">My Dashboard</a></li>
+                      <div class="d-flex justify-content-center">
+                        <form th:action="@{/logout}" method="post">
+                          <button type="submit"
+                            class="d-flex justify-content-center rounded btn btn-outline-custom my-2 w-60">
+                            Logout
+                          </button>
+                        </form>
+                      </div>
+                    </ul>
+                  </th:block>
+                </th:block>
+                <th:block sec:authorize="!isAuthenticated()">
+                  <!-- Se nessuno è loggato, mostra il pulsante di login -->
+                  <button class="btn btn-login dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                    aria-expanded="false">
+                    Login
+                  </button>
+                  <ul class="dropdown-menu dropdown-menu-end">
+                    <li class="dropdown-item">
+                      <form th:action="@{/authentication}" method="post">
+                        <div class="form-group stile-form">
+                          <label for="username">Username</label>
+                          <input type="text" class="form-control mb-3 input-usn" id="username" name="username"
+                            placeholder="username" required>
+                        </div>
+                        <div class="form-group stile-form">
+                          <label for="password">Password</label>
+                          <input type="password" class="form-control input-psw" id="password" name="password"
+                            placeholder="password" required>
+                        </div>
+                        <div th:if="${param.error}">
+                          <p class="text-danger">Invalid username or password</p>
+                        </div>
+                        <div class="d-flex justify-content-center">
+                          <button type="submit"
+                            class="d-flex justify-content-center rounded btn btn-outline-custom my-5 w-60">Login</button>
+                        </div>
+                      </form>
+                    </li>
+                  </ul>
+                </th:block>
+              </div>
             </div>
+          </div>
         </nav>
-    </header>
+      </header>
+    
 
 
     <main class="container d-flex flex-column justify-content-center align-items-center">
@@ -58,7 +92,6 @@
             <div class="row justify-content-center">
                 <div class="col-sm-12 col-lg-8 mb-5">
                     <div class="d-flex align-items-start flex-column">
-
                         <a th:href="${previousPage}" class="btn-back mt-5 mb-5">
                             <i class="fa-solid fa-circle-arrow-left me-1"></i>
                             <span

@@ -11,7 +11,7 @@
 
     <link rel="stylesheet" th:href="@{/css/style.css}">
 
-    <title>DASHBOARD ARTICOLI ADMIN</title>
+    <title>DASHBOARD ARTICOLI ADMIN/USER</title>
 </head>
 
 <body>
@@ -35,7 +35,7 @@
                                         th:text="${#strings.toUpperCase(loggedUser.substring(0,1)) + loggedUser.substring(1)}"></span>
                                 </button>
                                 <ul class="dropdown-menu dropdown-menu-end">
-                                    <li><a class="dropdown-item my-2 fs-5 mt-3" href="#">My Profile</a></li>
+                                    <li><a class="dropdown-item my-2 fs-5 mt-3" th:href="@{/profile}">My Profile</a></li>
                                     <li>
                                         <form th:action="@{/logout}" method="post">
                                             <button type="submit" class="dropdown-item my-2 fs-5 mt-3"></a>
