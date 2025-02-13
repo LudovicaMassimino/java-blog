@@ -36,7 +36,7 @@ public class User {
     @Column(nullable = false)
     private String role; // ROLE_ADMIN o ROLE_USER
 
-    @Column (nullable = false)
+    @Column (nullable = true)
     private String photoProfile;
 
     @Transient
@@ -101,5 +101,5 @@ public class User {
     public void setArticles(List<Article> articles) {
         this.articles = articles;
     }
-    
+
 }

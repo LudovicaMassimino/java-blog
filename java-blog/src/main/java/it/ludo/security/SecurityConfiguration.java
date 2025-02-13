@@ -28,7 +28,7 @@ public class SecurityConfiguration {
                         .permitAll()
                         .requestMatchers("/article/admin/**").hasRole("ADMIN")
                         .requestMatchers("/article/user/**").hasRole("USER")
-                        .requestMatchers("/user/**").hasAnyRole("USER", "ADMIN")
+                        .requestMatchers("/dashboard/admin", "/user/**").hasAnyRole("USER", "ADMIN")
                         .requestMatchers("/article/{id}/**").hasAnyRole("ADMIN", "USER")
                         .anyRequest().authenticated())
                 .formLogin(login -> login

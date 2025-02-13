@@ -33,7 +33,6 @@ public class Article {
     @Column(nullable = false, length = 10000)
     private String body;
 
-    // @NotNull(message = "Campo Obbligatorio")
     @Column(nullable = false)
     private LocalDate article_date;
 
@@ -43,12 +42,10 @@ public class Article {
     @Transient
     private MultipartFile imageFile;
 
-    // @NotNull(message = "Campo Obbligatorio")
     @ManyToOne
     @JoinColumn(name = "author_id", referencedColumnName = "id")
     private User author;
 
-    // @NotNull(message = "Campo Obbligatorio")
     @ManyToOne
     @JoinColumn(name = "category_id", nullable = false)
     @JsonBackReference

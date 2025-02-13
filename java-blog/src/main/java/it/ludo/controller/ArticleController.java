@@ -56,40 +56,55 @@ public class ArticleController {
     UserRepo userRepo;
 
     @GetMapping("/home")
-    public String getArticles(@RequestParam(name = "category", required = false) String category, Model model) {
-        List<Article> articles = articleRepo.findAll();
+    public String getArticles(@RequestParam(name = "category", required = false) String category, Model model,
+            Principal principal) {
 
-        if (category == null || category.isEmpty()) { // senza filtro mostra tutti gli articoli
-            articles = articleRepo.findAll();
-        } else {
-            articles = articleRepo.findByCategoryName(category); // filtra articoli per categoria
+        // Verifica che il Principal non sia null
+        if (principal != null) {
+            String username = principal.getName();
+            Optional<User> loggedUserOpt = userRepo.findByUsername(username);
+            if (loggedUserOpt.isPresent()) {
+                User loggedUser = loggedUserOpt.get();
+                model.addAttribute("user", loggedUser);
+                model.addAttribute("loggedUser", username);
+            }
         }
 
-        boolean noArticles = articles.isEmpty(); // se non ci sono art per quella cat
+        List<Article> articles;
 
-        // Nome dell'utente loggato
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
+        if (category == null || category.isEmpty()) {
+            articles = articleRepo.findAll(); // Mostra tutti gli articoli
+        } else {
+            articles = articleRepo.findByCategoryName(category); // Filtra per categoria
+        }
+
+        boolean noArticles = articles.isEmpty();
 
         model.addAttribute("list", articles);
         model.addAttribute("category", categoryRepo.findAll());
         model.addAttribute("selectedCategory", category);
         model.addAttribute("noArticles", noArticles);
-        model.addAttribute("loggedUser", username);
 
         return "home/index";
+
     }
 
     @GetMapping("/home/article/{id}")
     public String readMore(@PathVariable("id") Integer id,
-            @RequestHeader(value = "Referer", required = false) String referer, Model model) {
+            @RequestHeader(value = "Referer", required = false) String referer, Model model, Principal principal) {
         Article article = articleRepo.getReferenceById(id);
         model.addAttribute("article", article);
 
-        // Nome dell'utente loggato
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
-        model.addAttribute("loggedUser", username);
+        // Verifica che il Principal non sia null
+        if (principal != null) {
+            String username = principal.getName();
+            Optional<User> loggedUserOpt = userRepo.findByUsername(username);
+            if (loggedUserOpt.isPresent()) {
+                User loggedUser = loggedUserOpt.get();
+                model.addAttribute("user", loggedUser);
+                model.addAttribute("loggedUser", username);
+            }
+        }
 
         // Determina la pagina di origine
         if (referer != null && (referer.contains("/home") || referer.contains("/dashboard/admin"))) {
@@ -105,8 +120,16 @@ public class ArticleController {
             @RequestParam(name = "body", required = false) String body,
             @RequestParam(name = "category", required = false) String category, Principal principal) {
 
-        // Utente loggato
+        if (principal == null) {
+            return "redirect:/home";
+        }
+
         String username = principal.getName();
+        Optional<User> loggedUserOpt = userRepo.findByUsername(username);
+        User loggedUser = loggedUserOpt.get();
+
+        // Utente loggato
+
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         boolean isAdmin = authentication.getAuthorities().stream()
                 .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
@@ -156,6 +179,7 @@ public class ArticleController {
         model.addAttribute("category", categories);
         model.addAttribute("selectedCategory", category);
         model.addAttribute("noArticles", noArticles);
+        model.addAttribute("user", loggedUser);
         model.addAttribute("loggedUser", username);
         model.addAttribute("isAdmin", isAdmin);
 
@@ -184,6 +208,10 @@ public class ArticleController {
             @RequestHeader(value = "Referer", required = false) String referer, Model model, Principal principal) {
 
         String username = principal.getName();
+        Optional<User> loggedUserOpt = userRepo.findByUsername(username);
+        User loggedUser = loggedUserOpt.get();
+
+        model.addAttribute("user", loggedUser);
         model.addAttribute("loggedUser", username);
         Article article = articleRepo.getReferenceById(id);
         model.addAttribute("article", article);
@@ -204,6 +232,10 @@ public class ArticleController {
         model.addAttribute("category", categoryRepo.findAll());
 
         String username = principal.getName();
+        Optional<User> loggedUserOpt = userRepo.findByUsername(username);
+        User loggedUser = loggedUserOpt.get();
+
+        model.addAttribute("user", loggedUser);
         model.addAttribute("loggedUser", username);
 
         return "dashboard/dash_update";
@@ -257,15 +289,23 @@ public class ArticleController {
     }
 
     @GetMapping("/dashboard/create")
-    public String create(Model model) {
+    public String create(Model model, Principal principal) {
+
+        if (principal == null) {
+            return "redirect:/home";
+        }
+
+        String username = principal.getName();
+        Optional<User> loggedUserOpt = userRepo.findByUsername(username);
+        User loggedUser = loggedUserOpt.get();
 
         // Utente loggato
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
 
         model.addAttribute("article", new Article());
         model.addAttribute("users", userRepo.findAll());
         model.addAttribute("category", categoryRepo.findAll());
+        model.addAttribute("user", loggedUser);
         model.addAttribute("loggedUser", username);
 
         return "/dashboard/dash_create";
@@ -348,10 +388,59 @@ public class ArticleController {
 
         // Utente loggato
         String username = principal.getName();
+        Optional<User> loggedUserOpt = userRepo.findByUsername(username);
+
+        if (loggedUserOpt.isPresent()) {
+            model.addAttribute("user", loggedUserOpt.get());
+        } else {
+            throw new RuntimeException("Utente non trovato per username: " + username);
+        }
 
         model.addAttribute("loggedUser", username);
 
         return "home/profile";
-
     }
+
+    @PostMapping("/profile/updatePhoto")
+    public String updatePhoto(@RequestParam("photoProfile") MultipartFile photoProfile, Principal principal,
+            Model model) {
+
+        String username = principal.getName();
+        Optional<User> loggedUserOpt = userRepo.findByUsername(username);
+
+        if (loggedUserOpt.isPresent()) {
+            model.addAttribute("user", loggedUserOpt.get());
+        } else {
+            throw new RuntimeException("Utente non trovato per username: " + username);
+        }
+
+        User user = loggedUserOpt.get();
+        if (photoProfile != null && !photoProfile.isEmpty()) {
+            try {
+                String uploadDir = System.getProperty("user.home") + "/uploads/";
+
+                // Crea la directory se non esiste
+                File uploadPath = new File(uploadDir);
+                if (!uploadPath.exists()) {
+                    uploadPath.mkdirs();
+                }
+
+                // Salva il file
+                String fileName = photoProfile.getOriginalFilename();
+                File file = new File(uploadDir + fileName);
+                photoProfile.transferTo(file);
+
+                // Salva il nome del file nella proprietà `image`
+                user.setPhotoProfile("uploads/" + fileName);
+                userRepo.save(user);
+            } catch (IOException e) {
+                e.printStackTrace();
+                model.addAttribute("errorMessage", "Image upload error.");
+                return "/home/profile";
+            }
+        }
+
+        return "redirect:/profile";
+    }
+
 }
