@@ -11,12 +11,14 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -26,8 +28,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import it.ludo.model.Article;
+import it.ludo.model.Article.Status;
 import it.ludo.model.Category;
 import it.ludo.model.User;
 import it.ludo.repository.ArticleRepo;
@@ -73,9 +77,11 @@ public class ArticleController {
         List<Article> articles;
 
         if (category == null || category.isEmpty()) {
-            articles = articleRepo.findAll(); // Mostra tutti gli articoli
+            articles = articleRepo.findByStatus(Status.APPROVED); // Mostra tutti gli articoli approvati
         } else {
-            articles = articleRepo.findByCategoryName(category); // Filtra per categoria
+            articles = articleRepo.findByCategoryName(category).stream()
+                .filter(article -> article.getStatus() == Status.APPROVED)
+                .collect(Collectors.toList());
         }
 
         boolean noArticles = articles.isEmpty();
@@ -203,6 +209,30 @@ public class ArticleController {
         return "redirect:/dashboard/admin";
     }
 
+    @PostMapping("/dashboard/admin/approve/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public String approveArticle(@PathVariable("id") Integer id) {
+
+        Article article = articleRepo.findById(id)
+                .orElseThrow(() -> new RuntimeException("Articolo non trovato"));
+        article.setStatus(Status.APPROVED);
+        articleRepo.save(article);
+
+        return "redirect:/dashboard/admin";
+    }
+
+    @PostMapping("/dashboard/admin/reject/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public String rejectArticle(@PathVariable("id") Integer id) {
+
+        Article article = articleRepo.findById(id)
+                .orElseThrow(() -> new RuntimeException("Articolo non trovato"));
+        article.setStatus(Status.REJECTED);
+        articleRepo.save(article);
+
+        return "redirect:/dashboard/admin";
+    }
+
     @GetMapping("/article/{id}")
     public String show(@PathVariable("id") Integer id,
             @RequestHeader(value = "Referer", required = false) String referer, Model model, Principal principal) {
@@ -314,7 +344,7 @@ public class ArticleController {
     @PostMapping("/dashboard/create")
     public String create(@Valid @ModelAttribute("article") Article articleForm,
             BindingResult bindingResult,
-            Model model, Principal principal) {
+            Model model, Principal principal, RedirectAttributes redirectAttributes) {
 
         if (bindingResult.hasErrors()) {
             model.addAttribute("category", categoryRepo.findAll());
@@ -333,6 +363,9 @@ public class ArticleController {
         } else {
             throw new RuntimeException("Utente non trovato per username: " + username);
         }
+
+        // Imposta lo status a IN_REVIEW per la nuova creazione
+        articleForm.setStatus(Status.IN_REVIEW);
 
         MultipartFile imageFile = articleForm.getImageFile();
         if (imageFile != null && !imageFile.isEmpty()) {
@@ -361,6 +394,10 @@ public class ArticleController {
         }
 
         articleRepo.save(articleForm);
+
+        redirectAttributes.addFlashAttribute("postCreated", true);
+
+
         return "redirect:/dashboard/admin";
     }
 

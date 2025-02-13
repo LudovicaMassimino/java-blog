@@ -8,6 +8,8 @@ import org.springframework.web.multipart.MultipartFile;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -50,6 +52,16 @@ public class Article {
     @JoinColumn(name = "category_id", nullable = false)
     @JsonBackReference
     private Category category;
+
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private Status status; // Status dell'articolo (IN_REVIEW, APPROVED, REJECTED)
+
+    public enum Status {
+        IN_REVIEW,  // L'articolo è in attesa di approvazione
+        APPROVED,   // L'articolo è stato approvato e pubblicato
+        REJECTED    // L'articolo è stato rifiutato
+    }
 
     public Integer getId() {
         return id;
@@ -113,5 +125,13 @@ public class Article {
 
     public void setCategory(Category category) {
         this.category = category;
+    }
+
+    public Status getStatus() {
+        return status;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
     }
 }

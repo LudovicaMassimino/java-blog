@@ -26,4 +26,6 @@ public interface ArticleRepo extends JpaRepository<Article, Integer> {
     List<Article> findByAuthorUsernameAndTitleContainingIgnoreCase(String username, String title);
 
     List<Article> findByAuthorUsernameAndCategoryName(String username, String category);
+
+    List<Article> findByStatus(Article.Status status);
 }
