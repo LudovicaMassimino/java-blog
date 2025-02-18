@@ -33,10 +33,11 @@
               </th:block>
             </th:block>
             <!-- Logo: sempre visibile -->
-            <a class="navbar-brand ms-4" th:href="@{/home}" th:classappend="${#authorization.expression('isAuthenticated()') ? ' centered-logo' :''}">
+            <a class="navbar-brand ms-4" th:href="@{/home}"
+              th:classappend="${#authorization.expression('isAuthenticated()') ? ' centered-logo' :''}">
               <div class="logo-wrapper">
-              <img th:src="@{/img/LogoWorld.png}" alt="Logo" class="navbar-logo" width="80" />
-            </div>
+                <img th:src="@{/img/LogoWorld.png}" alt="Logo" class="navbar-logo" width="80" />
+              </div>
             </a>
             <!-- Menu Desktop: visibile solo su dispositivi lg e superiori -->
             <th:block sec:authorize="isAuthenticated()">
@@ -201,31 +202,36 @@
         </div>
         <div class="row justify-content-center">
           <div class="col-sm-12 col-lg-8 my-5" th:each="article : ${list}">
-            <div class="card position-relative">
+            <div class="card position-relative" style="border: none;">
               <img
                 th:src="${#strings.startsWith(article.image, 'uploads/') ? '/' + article.image : '/img/' + article.image}"
-                alt="Article Image" class="img-article img-fluid border-bottom">
-              <button class="btn btn-danger btn-img position-absolute m-2">
-                <i class="bi bi-pinterest">
-                </i>Salva
-              </button>
+                alt="Article Image" class="img-article img-fluid">
+              <div class="position-absolute top-0 start-0 w-100">
+                <div class="d-flex justify-content-between align-items-center m-2">
+                  <button class="btn btn-danger btn-img">
+                    <i class="bi bi-pinterest">
+                    </i>Salva
+                  </button>
 
-              <button type="button" data-bs-toggle="modal" th:data-bs-target="'#imageModal' + ${article.id}"
-                data-id="${article.id}" class="btn position-absolute top-0 end-0 m-2">
-                <i class="fa-solid fa-magnifying-glass-plus"></i>
-              </button>
+                  <button type="button" data-bs-toggle="modal" th:data-bs-target="'#imageModal' + ${article.id}"
+                    data-id="${article.id}" class="btn ms-auto">
+                    <i class="fa-solid fa-magnifying-glass-plus"></i>
+                  </button>
+                </div>
+              </div>
+
 
 
               <div class="card-body">
                 <h3 class="card-title" th:text="${article.title}"></h3>
                 <p class="card-text text-muted">Published on: <span
                     th:text="${#temporals.format(article.article_date, 'dd/MM/yyyy')}"></span></p>
-                <span class="badge badge-category bg-primary text-white" th:text="${article.category.name}"></span>
+                <span class="badge badge-cat_inArt" th:text="${article.category.name}"></span>
                 <p class="card-text mt-2"
                   th:text="${article.body.length() > 100 ? #strings.substring(article.body, 0, 100) + '...' : article.body}">
                 </p>
                 <div class="d-flex align-items-end flex-column">
-                  <a th:href="@{'/home/article/' + ${article.id}}" class="btn btn-success">Read more</a>
+                  <a th:href="@{'/home/article/' + ${article.id}}" class="btn badge-cat">Read more</a>
                 </div>
               </div>
             </div>

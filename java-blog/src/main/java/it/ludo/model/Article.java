@@ -55,12 +55,17 @@ public class Article {
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private Status status; // Status dell'articolo (IN_REVIEW, APPROVED, REJECTED)
+    private Status status;
 
     public enum Status {
-        IN_REVIEW,  // L'articolo è in attesa di approvazione
-        APPROVED,   // L'articolo è stato approvato e pubblicato
-        REJECTED    // L'articolo è stato rifiutato
+        IN_REVIEW,
+        APPROVED,
+        REJECTED;
+
+        public String getFormattedStatus() {
+            return this.name().replace('_', ' ').toLowerCase().replaceFirst(".",
+                    String.valueOf(this.name().charAt(0)).toUpperCase());
+        }
     }
 
     public Integer getId() {
@@ -106,7 +111,7 @@ public class Article {
     public MultipartFile getImageFile() {
         return imageFile;
     }
-    
+
     public void setImageFile(MultipartFile imageFile) {
         this.imageFile = imageFile;
     }

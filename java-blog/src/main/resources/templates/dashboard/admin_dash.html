@@ -155,8 +155,8 @@
                         </a>
 
                         <!-- Itera su tutte le categorie ottenute dal database -->
-                        <div th:each="category : ${category}">
-                            <a class="badge badge-cat me-1"
+                        <div class="d-flex gap-1">
+                            <a class="badge badge-cat" th:each="category : ${category}"
                                 th:classappend="${selectedCategory == category.name} ? 'selected' : ''"
                                 th:href="@{/dashboard/admin?category={category}(category=${category.name})}"
                                 th:text="${category.name}">
@@ -166,13 +166,24 @@
                 </div>
                 <!-- col dx -->
                 <div class="col-12 col-lg-2 d-flex align-items-center justify-content-lg-end">
-                    <div class="mt-5 mt-lg-0">
-                        <form class="d-inline-flex input-group" style="flex-wrap: nowrap;" method="POST"
-                            th:action="@{/dashboard/admin}">
+                    <div class="mt-5 mt-lg-0 position-relative">
+                        <form id="categoryForm" class="d-inline-flex input-group" style="flex-wrap: nowrap;"
+                            method="POST" th:action="@{/dashboard/admin}">
                             <input class="input-cat" type="text" name="newCategory" placeholder="New category name"
                                 aria-label="New category name" />
-                            <button class="btn btn-outline-success btn-save" type="submit">Save</button>
+                            <button class="btn btn-save" type="submit">Save</button>
                         </form>
+                        <div id="errorContainer"
+                            style="position: absolute; top: 100%; left: 0; margin-top: 0.5rem; width: 100%;">
+                            <!-- Messaggio dal controller (categoria già esistente) -->
+                            <div th:if="${errorMessage}" id="serverError" style="color: white; margin-bottom: 0.5rem;">
+                                <span th:utext="${errorMessage}"></span>
+                            </div>
+                            <!-- Messaggio di errore client-side (campo vuoto) -->
+                            <div id="clientError" style="color: white; display: none;">
+                                Please enter a category name
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -186,48 +197,64 @@
                         No articles available for this category.
                     </div>
                 </div>
-                <div class="col-lg-12 col-md-12 table-container" th:if="${!noArticles}">
+                <div class="col-lg-12 col-md-12 table-container mt-5" th:if="${!noArticles}">
                     <table class="table custom-table table-hover">
                         <thead>
                             <tr class="fs-4">
-                                <th scope="col" class="text-center col-post">Post</th>
+                                <th scope="col" class="ps-5 col-post">Post</th>
                                 <th scope="col" class="text-center col-author" sec:authorize="hasRole('ROLE_ADMIN')">
                                     Author</th>
                                 <th scope="col" class="text-center col-status">Status</th>
-                                <th scope="col" class="text-center col-btn">Actions</th>
+                                <th scope="col" class="text-end pe-5 col-btn">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr th:each="article : ${list}" class="">
-                                <td class="align-middle text-center fs-5">
-                                    <div class="ps-5" th:text="${article.title}">
+                                <td class="align-middle ps-5 fs-5 fw-bold">
+                                    <div th:text="${article.title}">
                                     </div>
                                 </td>
-                                <td class="text-center align-middle fs-5" sec:authorize="hasRole('ROLE_ADMIN')">
+                                <td class="text-center align-middle fs-5 fw-bold" sec:authorize="hasRole('ROLE_ADMIN')">
                                     <div
                                         th:text="${#strings.toUpperCase(article.author.username.substring(0,1)) + article.author.username.substring(1)}">
                                     </div>
                                 </td>
-                                <td class="text-center align-middle fs-5" th:text="${article.status}"></td>
+                                <td class="text-center align-middle fs-5 fw-bold">
+                                    <span th:unless="${article.status.toString().equals('IN_REVIEW')}"
+                                        th:text="${article.status.getFormattedStatus()}"
+                                        th:classappend="${article.status.toString().equals('APPROVED') ? ' text-approval' : ' text-rejected'}">
+                                    </span>
+                                    <a th:if="${article.status.toString().equals('IN_REVIEW') and isAdmin}"
+                                        th:href="@{|/article/${article.id}?from=review|}"
+                                        th:text="${article.status.getFormattedStatus()}"
+                                        th:classappend="' text-review'">
+                                    </a>
+                                    <span th:if="${article.status.toString().equals('IN_REVIEW') and !isAdmin}"
+                                        th:text="${article.status.getFormattedStatus()}"
+                                        th:classappend="' text-review'">
+                                    </span>
+                                </td>
+
+
                                 <!-- buttons -->
-                                <td class="align-middle">
-                                    <div class="d-flex justify-content-center gap-3">
+                                <td class="align-middle pe-5">
+                                    <div class="d-flex justify-content-end gap-3">
+                                        <a class="btn btn-outline-custom btn-show"
+                                            th:href="@{|/article/${article.id}|}">
+                                            <i class="fa-solid fa-magnifying-glass icon-scale" fill="currentColor"></i>
+                                        </a>
+                                        <a class="btn btn-outline-custom btn-update"
+                                            th:href="@{|/article/${article.id}/update|}"><i
+                                                class="fa-solid fa-pencil icon-scale" fill="currentColor"></i>
+                                        </a>
                                         <th:block sec:authorize="hasRole('ROLE_ADMIN')">
-                                            <button type="button" class="btn btn-outline-danger btn-delete"
+                                            <button type="button" class="btn btn-outline-custom btn-delete"
                                                 data-bs-toggle="modal"
                                                 th:data-bs-target="'#deleteModal' + ${article.id}"
                                                 data-id="${article.id}">
                                                 <i class="fa solid fa-trash-can icon-scale" fill="currentColor"></i>
                                             </button>
                                         </th:block>
-                                        <a class="btn btn-outline-primary btn-update"
-                                            th:href="@{|/article/${article.id}/update|}"><i
-                                                class="fa-solid fa-pencil icon-scale" fill="currentColor"></i>
-                                        </a>
-                                        <a class="btn btn-outline-success btn-show"
-                                            th:href="@{|/article/${article.id}|}">
-                                            <i class="fa-solid fa-magnifying-glass icon-scale" fill="currentColor"></i>
-                                        </a>
                                     </div>
 
                                     <!-- Modal -->
@@ -278,14 +305,18 @@
         aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content text-center p-4">
-                <div class="modal-header border-0 d-flex flex-column align-items-center">
-                    <h2 class="modal-title text-center fw-bold w-100" id="postCreatedModalLabel">Post Created</h2>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <div class="modal-header border-0 d-flex align-items-center position-relative">
+                    <p class="modal-title text-center fs-1 fw-bold w-100" id="postCreatedModalLabel">Congratulations!
+                    </p>
+                    <button type="button" class="btn-close position-absolute top-0 end-0" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
                 </div>
                 <div class="d-flex flex-column align-items-center">
-                    <span style="font-size: 15rem;">😊</span> <!-- Faccina grande -->
-                    <p class="mt-3 fs-3 fw-bold">Complimenti!<br>Hai creato il tuo articolo con successo!<br>Attendi
-                        l'approvazione dell'Admin e il tuo articolo potrà essere letto da tutti</p>
+                    <img th:src="@{/img/success.gif}" alt="Immagine animata successo" />
+                    <p class="mt-3 fs-3 fw-bold">You've successfully created your article!</p>
+                    <p class="mt-3 fs-5 fw-bold">Once approved by the Admin, your article will be available for everyone
+                        to read
+                    </p>
                 </div>
                 <div class="modal-footer border-0 d-flex justify-content-center">
                     <button type="button" class="btn btn-outline-custom rounded fs-4 w-60"
@@ -302,6 +333,29 @@
             myModal.show();
         });
     </script>
+
+    <!-- script per l'input-cat -->
+
+    <script>
+        document.getElementById('categoryForm').addEventListener('submit', function (e) {
+            var input = this.querySelector('.input-cat');
+            var clientError = document.getElementById('clientError');
+            var serverError = document.getElementById('serverError');
+
+            if (!input.value.trim()) {
+                e.preventDefault();
+                clientError.style.display = 'block';
+                // Nascondi l'errore server, se presente
+                if (serverError) {
+                    serverError.style.display = 'none';
+                }
+            } else {
+                clientError.style.display = 'none';
+            }
+        });
+    </script>
+
+
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"

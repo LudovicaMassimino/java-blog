@@ -8,6 +8,7 @@ import java.nio.file.Paths;
 import java.security.Principal;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -80,8 +81,8 @@ public class ArticleController {
             articles = articleRepo.findByStatus(Status.APPROVED); // Mostra tutti gli articoli approvati
         } else {
             articles = articleRepo.findByCategoryName(category).stream()
-                .filter(article -> article.getStatus() == Status.APPROVED)
-                .collect(Collectors.toList());
+                    .filter(article -> article.getStatus() == Status.APPROVED)
+                    .collect(Collectors.toList());
         }
 
         boolean noArticles = articles.isEmpty();
@@ -193,9 +194,24 @@ public class ArticleController {
     }
 
     @PostMapping("/dashboard/admin")
-    public String addCategory(@RequestParam(name = "newCategory", required = false) String newCategory) {
+    public String addCategory(@RequestParam(name = "newCategory", required = false) String newCategory,
+            RedirectAttributes redirectAttributes) {
 
         if (newCategory != null && !newCategory.isEmpty()) {
+            List<String> allowedLanguages = Arrays.asList("JavaScript", "Python", "Java", "C", "C++", "C#", "Swift",
+                    "Go", "Rust", "Kotlin", "PHP", "TypeScript", "Ruby", "Dart", "R", "Objective-C");
+
+            // Verifica se il linguaggio inserito è tra quelli ammessi (case-insensitive)
+            boolean isAllowed = allowedLanguages.stream()
+                    .anyMatch(lang -> lang.equalsIgnoreCase(newCategory.trim()));
+
+            if (!isAllowed) {
+                // Se il valore non è un linguaggio ammesso, imposta il messaggio d'errore e
+                // reindirizza
+                redirectAttributes.addFlashAttribute("errorMessage",
+                        "Invalid category!<br>Please enter a programming language");
+                return "redirect:/dashboard/admin";
+            }
             // Controlla se la categoria esiste già
             Category existingCategory = categoryRepo.findByName(newCategory);
             if (existingCategory == null) {
@@ -203,13 +219,17 @@ public class ArticleController {
                 Category newCat = new Category();
                 newCat.setName(newCategory);
                 categoryRepo.save(newCat); // Salva la nuova categoria nel database
+            } else {
+                redirectAttributes.addFlashAttribute("errorMessage",
+                        "This category already exists!<br>Please enter another category name");
+                return "redirect:/dashboard/admin";
             }
         }
 
         return "redirect:/dashboard/admin";
     }
 
-    @PostMapping("/dashboard/admin/approve/{id}")
+    @PostMapping("/articles/{id}/approve")
     @PreAuthorize("hasRole('ADMIN')")
     public String approveArticle(@PathVariable("id") Integer id) {
 
@@ -221,7 +241,7 @@ public class ArticleController {
         return "redirect:/dashboard/admin";
     }
 
-    @PostMapping("/dashboard/admin/reject/{id}")
+    @PostMapping("/articles/{id}/reject")
     @PreAuthorize("hasRole('ADMIN')")
     public String rejectArticle(@PathVariable("id") Integer id) {
 
@@ -396,7 +416,6 @@ public class ArticleController {
         articleRepo.save(articleForm);
 
         redirectAttributes.addFlashAttribute("postCreated", true);
-
 
         return "redirect:/dashboard/admin";
     }
