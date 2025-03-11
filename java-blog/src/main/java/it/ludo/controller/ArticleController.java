@@ -60,68 +60,6 @@ public class ArticleController {
     @Autowired
     UserRepo userRepo;
 
-    @GetMapping("/home")
-    public String getArticles(@RequestParam(name = "category", required = false) String category, Model model,
-            Principal principal) {
-
-        // Verifica che il Principal non sia null
-        if (principal != null) {
-            String username = principal.getName();
-            Optional<User> loggedUserOpt = userRepo.findByUsername(username);
-            if (loggedUserOpt.isPresent()) {
-                User loggedUser = loggedUserOpt.get();
-                model.addAttribute("user", loggedUser);
-                model.addAttribute("loggedUser", username);
-            }
-        }
-
-        List<Article> articles;
-
-        if (category == null || category.isEmpty()) {
-            articles = articleRepo.findByStatus(Status.APPROVED); // Mostra tutti gli articoli approvati
-        } else {
-            articles = articleRepo.findByCategoryName(category).stream()
-                    .filter(article -> article.getStatus() == Status.APPROVED)
-                    .collect(Collectors.toList());
-        }
-
-        boolean noArticles = articles.isEmpty();
-
-        model.addAttribute("list", articles);
-        model.addAttribute("category", categoryRepo.findAll());
-        model.addAttribute("selectedCategory", category);
-        model.addAttribute("noArticles", noArticles);
-
-        return "home/index";
-
-    }
-
-    @GetMapping("/home/article/{id}")
-    public String readMore(@PathVariable("id") Integer id,
-            @RequestHeader(value = "Referer", required = false) String referer, Model model, Principal principal) {
-        Article article = articleRepo.getReferenceById(id);
-        model.addAttribute("article", article);
-
-        // Verifica che il Principal non sia null
-        if (principal != null) {
-            String username = principal.getName();
-            Optional<User> loggedUserOpt = userRepo.findByUsername(username);
-            if (loggedUserOpt.isPresent()) {
-                User loggedUser = loggedUserOpt.get();
-                model.addAttribute("user", loggedUser);
-                model.addAttribute("loggedUser", username);
-            }
-        }
-
-        // Determina la pagina di origine
-        if (referer != null && (referer.contains("/home") || referer.contains("/dashboard/admin"))) {
-            model.addAttribute("previousPage", referer);
-        } else {
-            model.addAttribute("previousPage", "/home"); // Default fallback
-        }
-        return "home/article-detail";
-    }
-
     @GetMapping("/dashboard/admin")
     public String index(Model model, @RequestParam(name = "title", required = false) String title,
             @RequestParam(name = "body", required = false) String body,
@@ -198,11 +136,16 @@ public class ArticleController {
             RedirectAttributes redirectAttributes) {
 
         if (newCategory != null && !newCategory.isEmpty()) {
-            List<String> allowedLanguages = Arrays.asList("JavaScript", "Python", "Java", "C", "C++", "C#", "Swift",
-                    "Go", "Rust", "Kotlin", "PHP", "TypeScript", "Ruby", "Dart", "R", "Objective-C");
+            List<String> AllAllowedLanguages = Arrays.asList(
+                "Java", "Python", "C++", "C", "JavaScript", "Ruby", "PHP", "Go", "Swift", "C#", "TypeScript", "Kotlin", "Rust", 
+                "Dart", "R", "Objective-C", "Perl", "Lua", "Haskell", "Erlang", "Elixir", "F#", "Lisp", "Clojure", "OCaml", "Scala", 
+                "Julia", "MATLAB", "SQL", "PL/SQL", "T-SQL", "GraphQL", "Ada", "Embedded C", "Assembly", "PowerShell", "Fortran", 
+                "IDL", "Wolfram Language", "Solidity", "Vyper", "Move", "COBOL", "Prolog", "Brainfuck", "Malbolge", "Whitespace", 
+                "Befunge", "Piet"
+            );
 
             // Verifica se il linguaggio inserito è tra quelli ammessi (case-insensitive)
-            boolean isAllowed = allowedLanguages.stream()
+            boolean isAllowed = AllAllowedLanguages.stream()
                     .anyMatch(lang -> lang.equalsIgnoreCase(newCategory.trim()));
 
             if (!isAllowed) {
@@ -419,84 +362,4 @@ public class ArticleController {
 
         return "redirect:/dashboard/admin";
     }
-
-    @GetMapping("/uploads/{fileName}")
-    @ResponseBody
-    public ResponseEntity<Resource> serveFile(@PathVariable String fileName) {
-        try {
-            Path filePath = Paths.get(System.getProperty("user.home") + "/uploads/").resolve(fileName).normalize();
-            Resource resource = new UrlResource(filePath.toUri());
-
-            if (resource.exists()) {
-                return ResponseEntity.ok()
-                        .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + fileName + "\"")
-                        .body(resource);
-            } else {
-                return ResponseEntity.notFound().build();
-            }
-        } catch (MalformedURLException e) {
-            return ResponseEntity.badRequest().build();
-        }
-    }
-
-    @GetMapping("/profile")
-    public String getProfile(Model model, Principal principal) {
-
-        // Utente loggato
-        String username = principal.getName();
-        Optional<User> loggedUserOpt = userRepo.findByUsername(username);
-
-        if (loggedUserOpt.isPresent()) {
-            model.addAttribute("user", loggedUserOpt.get());
-        } else {
-            throw new RuntimeException("Utente non trovato per username: " + username);
-        }
-
-        model.addAttribute("loggedUser", username);
-
-        return "home/profile";
-    }
-
-    @PostMapping("/profile/updatePhoto")
-    public String updatePhoto(@RequestParam("photoProfile") MultipartFile photoProfile, Principal principal,
-            Model model) {
-
-        String username = principal.getName();
-        Optional<User> loggedUserOpt = userRepo.findByUsername(username);
-
-        if (loggedUserOpt.isPresent()) {
-            model.addAttribute("user", loggedUserOpt.get());
-        } else {
-            throw new RuntimeException("Utente non trovato per username: " + username);
-        }
-
-        User user = loggedUserOpt.get();
-        if (photoProfile != null && !photoProfile.isEmpty()) {
-            try {
-                String uploadDir = System.getProperty("user.home") + "/uploads/";
-
-                // Crea la directory se non esiste
-                File uploadPath = new File(uploadDir);
-                if (!uploadPath.exists()) {
-                    uploadPath.mkdirs();
-                }
-
-                // Salva il file
-                String fileName = photoProfile.getOriginalFilename();
-                File file = new File(uploadDir + fileName);
-                photoProfile.transferTo(file);
-
-                // Salva il nome del file nella proprietà `image`
-                user.setPhotoProfile("uploads/" + fileName);
-                userRepo.save(user);
-            } catch (IOException e) {
-                e.printStackTrace();
-                model.addAttribute("errorMessage", "Image upload error.");
-                return "/home/profile";
-            }
-        }
-
-        return "redirect:/profile";
-    }
-
 }
