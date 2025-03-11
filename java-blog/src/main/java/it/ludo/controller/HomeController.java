@@ -3,8 +3,6 @@ package it.ludo.controller;
 import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -14,19 +12,19 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import it.ludo.exception.ArticleNotFoundException;
 import it.ludo.model.Article;
-import it.ludo.model.Article.Status;
 import it.ludo.model.User;
-import it.ludo.repository.ArticleRepo;
 import it.ludo.repository.CategoryRepo;
 import it.ludo.repository.UserRepo;
+import it.ludo.service.ArticleService;
 
 @Controller
 @RequestMapping
 public class HomeController {
 
     @Autowired
-    ArticleRepo articleRepo;
+    ArticleService articleService;
 
     @Autowired
     CategoryRepo categoryRepo;
@@ -52,11 +50,9 @@ public class HomeController {
         List<Article> articles;
 
         if (category == null || category.isEmpty()) {
-            articles = articleRepo.findByStatus(Status.APPROVED); // Mostra tutti gli articoli approvati
+            articles = articleService.getApprovedArticles();
         } else {
-            articles = articleRepo.findByCategoryName(category).stream()
-                    .filter(article -> article.getStatus() == Status.APPROVED)
-                    .collect(Collectors.toList());
+            articles = articleService.getApprovedArticlesByCategory(category);
         }
 
         boolean noArticles = articles.isEmpty();
@@ -72,26 +68,33 @@ public class HomeController {
     @GetMapping("/home/article/{id}")
     public String readMore(@PathVariable("id") Integer id,
             @RequestHeader(value = "Referer", required = false) String referer, Model model, Principal principal) {
-        Article article = articleRepo.getReferenceById(id);
-        model.addAttribute("article", article);
 
-        // Verifica che il Principal non sia null
-        if (principal != null) {
-            String username = principal.getName();
-            Optional<User> loggedUserOpt = userRepo.findByUsername(username);
-            if (loggedUserOpt.isPresent()) {
-                User loggedUser = loggedUserOpt.get();
-                model.addAttribute("user", loggedUser);
-                model.addAttribute("loggedUser", username);
+        try {
+            Article article = articleService.getArticleById(id);
+            model.addAttribute("article", article);
+
+            // Verifica che il Principal non sia null
+            if (principal != null) {
+                String username = principal.getName();
+                Optional<User> loggedUserOpt = userRepo.findByUsername(username);
+                if (loggedUserOpt.isPresent()) {
+                    User loggedUser = loggedUserOpt.get();
+                    model.addAttribute("user", loggedUser);
+                    model.addAttribute("loggedUser", username);
+                }
             }
-        }
 
-        // Determina la pagina di origine
-        if (referer != null && (referer.contains("/home") || referer.contains("/dashboard/admin"))) {
-            model.addAttribute("previousPage", referer);
-        } else {
-            model.addAttribute("previousPage", "/home"); // Default fallback
+            // Determina la pagina di origine
+            if (referer != null && (referer.contains("/home") || referer.contains("/dashboard/admin"))) {
+                model.addAttribute("previousPage", referer);
+            } else {
+                model.addAttribute("previousPage", "/home"); // Default fallback
+            }
+            return "home/article-detail";
+
+        } catch (ArticleNotFoundException ex) {
+            model.addAttribute("errorMessage", "Articolo non trovato.");
+            return "error/404";
         }
-        return "home/article-detail";
     }
 }
