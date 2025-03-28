@@ -56,7 +56,7 @@ public class CrudArticleController {
         model.addAttribute("loggedUser", username);
 
         try {
-            Article article = articleService.getArticleById(id);  // Usa ArticleService
+            Article article = articleService.getArticleById(id); // Usa ArticleService
             model.addAttribute("article", article);
         } catch (ArticleNotFoundException e) {
             model.addAttribute("errorMessage", e.getMessage());
@@ -100,51 +100,47 @@ public class CrudArticleController {
             BindingResult bindingResult,
             Model model, Principal principal, RedirectAttributes redirectAttributes) {
 
+        if (articleForm.getImageFile() == null || articleForm.getImageFile().isEmpty()) {
+            bindingResult.rejectValue("imageFile", "error.article.imageFile", "Campo Obbligatorio");
+        }
+
         if (bindingResult.hasErrors()) {
             model.addAttribute("category", categoryRepo.findAll());
+            model.addAttribute("loggedUser", principal.getName());
+            Optional<User> loggedUserOpt = userRepo.findByUsername(principal.getName());
+            loggedUserOpt.ifPresent(user -> model.addAttribute("user", user));
             return "/dashboard/dash_create";
         }
 
-        if (articleForm.getArticle_date() == null) {
-            articleForm.setArticle_date(LocalDate.now());
+        if (articleForm.getArticleDate() == null) {
+            articleForm.setArticleDate(LocalDate.now());
         }
 
-        // Recupera il nome dell'utente loggato (sia che sia admin o user)
         String username = principal.getName();
         Optional<User> loggedUserOpt = userRepo.findByUsername(username);
-        if (loggedUserOpt.isPresent()) {
-            articleForm.setAuthor(loggedUserOpt.get());
-        } else {
-            throw new RuntimeException("Utente non trovato per username: " + username);
-        }
+        loggedUserOpt.ifPresent(articleForm::setAuthor);
 
-        // Imposta lo status a IN_REVIEW per la nuova creazione
         articleForm.setStatus(Status.IN_REVIEW);
 
-        MultipartFile imageFile = articleForm.getImageFile();
-        if (imageFile != null && !imageFile.isEmpty()) {
-            try {
-                // Usa un percorso stabile
-                String uploadDir = System.getProperty("user.home") + "/uploads/";
-
-                // Crea la directory se non esiste
-                File uploadPath = new File(uploadDir);
-                if (!uploadPath.exists()) {
-                    uploadPath.mkdirs();
-                }
-
-                // Salva il file
-                String fileName = imageFile.getOriginalFilename();
-                File file = new File(uploadDir + fileName);
-                imageFile.transferTo(file);
-
-                // Salva il nome del file nella proprietà `image`
-                articleForm.setImage("uploads/" + fileName);
-            } catch (IOException e) {
-                e.printStackTrace();
-                model.addAttribute("errorMessage", "Image upload error.");
-                return "/dashboard/dash_create";
+        try {
+            String uploadDir = System.getProperty("user.home") + "/uploads/";
+            File uploadPath = new File(uploadDir);
+            if (!uploadPath.exists()) {
+                uploadPath.mkdirs();
             }
+
+            String fileName = articleForm.getImageFile().getOriginalFilename();
+            File file = new File(uploadDir + fileName);
+            articleForm.getImageFile().transferTo(file);
+            articleForm.setImage("uploads/" + fileName);
+        } catch (IOException e) {
+            e.printStackTrace();
+            model.addAttribute("errorMessage", "Image upload error.");
+            model.addAttribute("category", categoryRepo.findAll());
+            model.addAttribute("loggedUser", principal.getName());
+            Optional<User> loggedUserOpt2 = userRepo.findByUsername(principal.getName());
+            loggedUserOpt2.ifPresent(user -> model.addAttribute("user", user));
+            return "/dashboard/dash_create";
         }
 
         articleService.saveArticle(articleForm);
@@ -158,7 +154,7 @@ public class CrudArticleController {
     public String update(@PathVariable("id") Integer id, Model model, Principal principal) {
 
         try {
-            model.addAttribute("article", articleService.getArticleById(id));  // Usa ArticleService
+            model.addAttribute("article", articleService.getArticleById(id)); // Usa ArticleService
         } catch (ArticleNotFoundException e) {
             model.addAttribute("errorMessage", e.getMessage());
             return "error/404";
@@ -220,7 +216,7 @@ public class CrudArticleController {
     @PostMapping("/article/{id}/delete")
     public String delete(@PathVariable("id") Integer id) {
         try {
-            articleService.deleteArticle(id);  // Usa ArticleService
+            articleService.deleteArticle(id); // Usa ArticleService
         } catch (ArticleNotFoundException e) {
             return "error/404";
         }

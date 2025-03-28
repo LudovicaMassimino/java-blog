@@ -57,29 +57,11 @@ public class DashboardController {
 
         List<Article> articles = new ArrayList<>();
 
-        if (title == null && body == null) {
-
-             if (isAdmin) {
-                 articles = articleService.getAllArticles();
-
-             } else {
-                 articles = articleService.getArticlesByAuthor(username);
-             }
-         } else if (title == null) {
-             // Se c'è solo il filtro sul body
-             if (isAdmin) {
-                 articles = articleService.getArticlesByBody(body);
-             } else {
-                 articles = articleService.getArticlesByAuthorAndBody(username, body);
-             }
-         } else {
-             // Se c'è il filtro sul titolo
-             if (isAdmin) {
-                 articles = articleService.getArticlesByTitle(title);
-             } else {
-                 articles = articleService.getArticlesByAuthorAndTitle(username, title);
-             }
-         }
+        if (isAdmin) {
+            articles = articleService.getAllArticles();
+        } else {
+            articles = articleService.getArticlesByAuthor(username);
+        }
 
         // Gestione del filtro per categoria
         if (category != null && !category.isEmpty()) {
@@ -112,12 +94,15 @@ public class DashboardController {
 
         if (newCategory != null && !newCategory.isEmpty()) {
             List<String> AllAllowedLanguages = Arrays.asList(
-                "Java", "Python", "C++", "C", "JavaScript", "Ruby", "PHP", "Go", "Swift", "C#", "TypeScript", "Kotlin", "Rust", 
-                "Dart", "R", "Objective-C", "Perl", "Lua", "Haskell", "Erlang", "Elixir", "F#", "Lisp", "Clojure", "OCaml", "Scala", 
-                "Julia", "MATLAB", "SQL", "PL/SQL", "T-SQL", "GraphQL", "Ada", "Embedded C", "Assembly", "PowerShell", "Fortran", 
-                "IDL", "Wolfram Language", "Solidity", "Vyper", "Move", "COBOL", "Prolog", "Brainfuck", "Malbolge", "Whitespace", 
-                "Befunge", "Piet"
-            );
+                    "Java", "Python", "C++", "C", "JavaScript", "Ruby", "PHP", "Go", "Swift", "C#", "TypeScript",
+                    "Kotlin", "Rust",
+                    "Dart", "R", "Objective-C", "Perl", "Lua", "Haskell", "Erlang", "Elixir", "F#", "Lisp", "Clojure",
+                    "OCaml", "Scala",
+                    "Julia", "MATLAB", "SQL", "PL/SQL", "T-SQL", "GraphQL", "Ada", "Embedded C", "Assembly",
+                    "PowerShell", "Fortran",
+                    "IDL", "Wolfram Language", "Solidity", "Vyper", "Move", "COBOL", "Prolog", "Brainfuck", "Malbolge",
+                    "Whitespace",
+                    "Befunge", "Piet");
 
             // Verifica se il linguaggio inserito è tra quelli ammessi (case-insensitive)
             boolean isAllowed = AllAllowedLanguages.stream()

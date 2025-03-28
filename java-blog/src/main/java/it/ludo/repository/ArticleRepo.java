@@ -11,21 +11,15 @@ import it.ludo.model.Article;
 
 @Repository
 public interface ArticleRepo extends JpaRepository<Article, Integer> {
- 
-    @Query("SELECT t FROM Article t WHERE t.category.name = :categoryName")
-    List<Article> findByCategoryName(@Param("categoryName") String categoryName);
 
-    List<Article> findByTitleContainingIgnoreCase(String title);
+    List<Article> findByCategoryNameOrderByCreatedAtDesc(@Param("categoryName") String categoryName);
 
-    List<Article> findByBodyContainingIgnoreCase(String body);
-
-    List<Article> findByAuthorUsername(String username);
-
-    List<Article> findByAuthorUsernameAndBodyContainingIgnoreCase(String username, String body);
-
-    List<Article> findByAuthorUsernameAndTitleContainingIgnoreCase(String username, String title);
+    List<Article> findAllByOrderByCreatedAtDesc();
+    List<Article> findByAuthorUsernameOrderByCreatedAtDesc(String username);
 
     List<Article> findByAuthorUsernameAndCategoryName(String username, String category);
 
     List<Article> findByStatus(Article.Status status);
+
+    List<Article> findByStatusOrderByCreatedAtDesc(Article.Status status);
 }

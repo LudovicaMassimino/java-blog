@@ -11,9 +11,8 @@ import it.ludo.exception.ArticleNotFoundException;
 import it.ludo.model.Article;
 import it.ludo.repository.ArticleRepo;
 
-
 @Service
-public class ArticleServiceImplements  implements ArticleService {
+public class ArticleServiceImplements implements ArticleService {
     @Autowired
     private ArticleRepo articleRepo;
 
@@ -21,20 +20,20 @@ public class ArticleServiceImplements  implements ArticleService {
 
     @Override
     public List<Article> getApprovedArticles() {
-        return articleRepo.findByStatus(Article.Status.APPROVED);
+        return articleRepo.findByStatusOrderByCreatedAtDesc(Article.Status.APPROVED);
     }
 
     @Override
     public List<Article> getApprovedArticlesByCategory(String category) {
-        return articleRepo.findByCategoryName(category)
-                          .stream()
-                          .filter(article -> article.getStatus() == Article.Status.APPROVED)
-                          .collect(Collectors.toList());
+        return articleRepo.findByCategoryNameOrderByCreatedAtDesc(category)
+                .stream()
+                .filter(article -> article.getStatus() == Article.Status.APPROVED)
+                .collect(Collectors.toList());
     }
 
     @Override
     public List<Article> getArticlesByCategory(String category) {
-        return articleRepo.findByCategoryName(category);
+        return articleRepo.findByCategoryNameOrderByCreatedAtDesc(category);
     }
 
     @Override
@@ -43,39 +42,19 @@ public class ArticleServiceImplements  implements ArticleService {
     }
 
     @Override
-    public List<Article> getArticlesByAuthorAndTitle(String username, String title) {
-        return articleRepo.findByAuthorUsernameAndTitleContainingIgnoreCase(username, title);
-    }
-
-    @Override
-    public List<Article> getArticlesByAuthorAndBody(String username, String body) {
-        return articleRepo.findByAuthorUsernameAndBodyContainingIgnoreCase(username, body);
-    }
-
-    @Override
     public List<Article> getAllArticles() {
-        return articleRepo.findAll();
+        return articleRepo.findAllByOrderByCreatedAtDesc();
     }
 
     @Override
     public List<Article> getArticlesByAuthor(String username) {
-        return articleRepo.findByAuthorUsername(username);
+        return articleRepo.findByAuthorUsernameOrderByCreatedAtDesc(username);
     }
 
-    @Override
-    public List<Article> getArticlesByBody(String body) {
-        return articleRepo.findByBodyContainingIgnoreCase(body);
-    }
-
-    @Override
-    public List<Article> getArticlesByTitle(String title) {
-        return articleRepo.findByTitleContainingIgnoreCase(title);
-    }
-    
     @Override
     public Article getArticleById(Integer id) {
         return articleRepo.findById(id)
-                          .orElseThrow(() -> new ArticleNotFoundException("Articolo non trovato con id: " + id));
+                .orElseThrow(() -> new ArticleNotFoundException("Articolo non trovato con id: " + id));
     }
 
     @Override

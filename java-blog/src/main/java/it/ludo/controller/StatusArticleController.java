@@ -7,10 +7,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import it.ludo.exception.ArticleNotFoundException;
 import it.ludo.model.Article;
 import it.ludo.model.Article.Status;
-import it.ludo.repository.ArticleRepo;
 import it.ludo.service.ArticleService;
 
 @Controller

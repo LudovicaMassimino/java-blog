@@ -14,11 +14,6 @@ public interface ArticleService {
     void deleteArticle(Integer id);
     Article approveArticle(Integer id);
     Article rejectArticle(Integer id);
-    List<Article> getArticlesByAuthorAndTitle(String username, String title);
-    List<Article> getArticlesByAuthorAndBody(String username, String body);
     List<Article> getAllArticles();
     List<Article> getArticlesByAuthor(String username);
-    List<Article> getArticlesByBody(String body);
-    List<Article> getArticlesByTitle(String title);
-    
 }
