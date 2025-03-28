@@ -17,7 +17,7 @@
 <body>
 
     <header class="sticky-top">
-        <nav class="navbar navbar-expand-lg nav-bg">
+        <nav class="navbar navbar-expand-lg">
             <div class="container-fluid">
                 <!-- Riga principale: contiene la parte sinistra (toggler, logo, menu desktop) e la parte destra (dropdown login) -->
                 <div class="d-flex w-100 align-items-center justify-content-between">
@@ -192,8 +192,8 @@
             <!-- BOX LISTA ARTICOLI -->
 
             <div class="row my-5 justify-content-center">
-                <div th:if="${noArticles}" class="alert text-white text-center mt-3 fs-4">
-                    <div class="content-box-article mt-5 d-flex mx-auto">
+                <div th:if="${noArticles}" class="alert text-white mt-3 fs-4">
+                    <div class="content-box-article mt-5 d-flex flex-column mx-auto text-center w-100">
                         No articles available for this category.
                     </div>
                 </div>
@@ -296,10 +296,6 @@
         </div>
     </main>
 
-
-    <footer>
-    </footer>
-
     <!-- Modal per il post creato -->
     <div class="modal fade" id="postCreatedModal" tabindex="-1" aria-labelledby="postCreatedModalLabel"
         aria-hidden="true">
@@ -326,36 +322,19 @@
         </div>
     </div>
 
-    <!-- Script per mostrare il modal se il post è stato creato -->
-    <script th:if="${postCreated != null}">
+    <!-- Mostra il modal solo se postCreated è true -->
+    <script th:inline="javascript">
         document.addEventListener("DOMContentLoaded", function () {
-            var myModal = new bootstrap.Modal(document.getElementById('postCreatedModal'));
-            myModal.show();
-        });
-    </script>
-
-    <!-- script per l'input-cat -->
-
-    <script>
-        document.getElementById('categoryForm').addEventListener('submit', function (e) {
-            var input = this.querySelector('.input-cat');
-            var clientError = document.getElementById('clientError');
-            var serverError = document.getElementById('serverError');
-
-            if (!input.value.trim()) {
-                e.preventDefault();
-                clientError.style.display = 'block';
-                // Nascondi l'errore server, se presente
-                if (serverError) {
-                    serverError.style.display = 'none';
-                }
-            } else {
-                clientError.style.display = 'none';
+            const postCreated = /*[[${postCreated}]]*/ false; // Aggiungi la variabile del modello qui
+            const postCreatedModal = document.getElementById('postCreatedModal');
+            if (postCreated && postCreatedModal) {
+                const myModal = new bootstrap.Modal(postCreatedModal);
+                myModal.show();
             }
         });
     </script>
 
-
+    <script src="/js/scriptDash.js"></script>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"

@@ -16,7 +16,7 @@
 <body>
 
   <header class="sticky-top">
-    <nav class="navbar navbar-expand-lg nav-bg">
+    <nav class="navbar navbar-expand-lg">
       <div class="container-fluid">
         <!-- Riga principale: contiene la parte sinistra (toggler, logo, menu desktop) e la parte destra (dropdown login) -->
         <div class="d-flex w-100 align-items-center justify-content-between">
@@ -172,40 +172,78 @@
 
 
   <main>
-    <div class="container d-flex flex-column justify-content-center align-items-center">
-      <div class="d-flex justify-content-center align-items-center mb-4 w-100">
+
+    <div class="container container-home d-flex flex-column justify-content-center align-items-center">
+
+      <!-- HERO SECTION -->
+      <div class="row align-items-start w-100 mb-5">
+
+        <!-- Carousel -->
+        <div class="col-md-8 d-flex justify-content-start col-carousel">
+          <div id="carouselExampleAutoplaying" class="carousel slide carousel-fade mb-5" data-bs-ride="carousel"
+            data-bs-interval="3000">
+            <div class="carousel-indicators">
+              <button type="button" data-bs-target="#carouselExampleAutoplaying" th:each="article, iterStat : ${list}"
+                th:attr="data-bs-slide-to=${iterStat.index}, 
+                   aria-current=${iterStat.index == 0} ? 'true' : null,
+                   aria-label='Slide ' + (${iterStat.index + 1})"
+                th:classappend="${iterStat.index == 0} ? ' active' : ''">
+              </button>
+            </div>
+            <div class="carousel-inner">
+              <div th:each="article, iterStat : ${list}" th:classappend="${iterStat.index == 0} ? ' active' : ''"
+                class="carousel-item bg-black">
+                <div class="carousel-caption position-absolute top-0 bottom-auto d-none d-md-block"
+                  style="z-index: 10;">
+                  <h1 th:text="${article.title}"></h1>
+                </div>
+                <img
+                  th:src="${#strings.startsWith(article.image, 'uploads/') ? '/' + article.image : '/img/' + article.image}"
+                  class="d-block w-100" style="opacity: 1.5;" alt="Article image">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card di registrazione -->
+        <div class="col-md-4 d-flex justify-content-end">
+          <div class="card modern-card card-register shadow-lg py-5 px-5 text-center">
+            <div class="card-text">
+              <h3 class="fs-2 mb-5">Want to share your article with us?</h3>
+              <p class="fs-4">Join our community and let the world hear your ideas!</p>
+            </div>
+            <div class="d-flex justify-content-center mt-5">
+              <a href="" class="btn badge-cat btn-register">Sign up here!</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Filter Categories -->
+
+      <div id="filter-section" class="d-flex justify-content-center align-items-start mb-4 w-100">
         <h5 class="me-3 mb-0 filter-cat">Filter Categories:</h5>
         <div>
           <a class="badge badge-cat" th:classappend="${selectedCategory == null} ? 'selected' : ''"
-            th:href="@{/home}">All
-            posts</a>
-          <a class="badge badge-cat" th:classappend="${selectedCategory == 'Java'} ? 'selected' : ''"
-            th:href="@{/home?category=Java}">Java</a>
-          <a class="badge badge-cat" th:classappend="${selectedCategory == 'PHP'} ? 'selected' : ''"
-            th:href="@{/home?category=PHP}">PHP</a>
-          <a class="badge badge-cat" th:classappend="${selectedCategory == 'JS'} ? 'selected' : ''"
-            th:href="@{/home?category=JS}">JS</a>
-
-          <a class="badge badge-cat" th:classappend="${selectedCategory == 'Laravel'} ? 'selected' : ''"
-            th:href="@{/home?category=Laravel}">Laravel</a>
-
-          <a class="badge badge-cat" th:classappend="${selectedCategory == 'Vue'} ? 'selected' : ''"
-            th:href="@{/home?category=Vue}">Vue</a>
+            th:href="@{/home#filter-section}">All Posts</a>
+          <a class="badge badge-cat me-1" th:each="category : ${category}"
+            th:classappend="${selectedCategory == category.name} ? 'selected' : ''"
+            th:href="@{/home(category=${category.name})} + '#filter-section'" th:text="${category.name}"></a>
         </div>
       </div>
 
 
       <!-- CARD -->
-      <div class="content-box-article mt-5">
-        <div th:if="${noArticles}" class="alert text-center text-white mt-3 fs-4">
+      <div class="content-box-article mt-5 d-flex justify-content-center align-items-center">
+        <div th:if="${noArticles}" class="alert text-center text-white my-3 fs-4">
           No articles available for this category.
         </div>
-        <div class="row justify-content-center">
-          <div class="col-sm-12 col-lg-8 my-5" th:each="article : ${list}">
-            <div class="card position-relative" style="border: none;">
+        <div class="row row-cols-1 row-cols-md-3 d-flex flex-wrap row-article justify-content-center">
+          <div class="col col-article" th:each="article : ${list}">
+            <div class="card d-flex justify-content-between flex-column position-relative" style="border: none;">
               <img
                 th:src="${#strings.startsWith(article.image, 'uploads/') ? '/' + article.image : '/img/' + article.image}"
-                alt="Article Image" class="img-article img-fluid">
+                alt="Article Image" class="img-fluid">
               <div class="position-absolute top-0 start-0 w-100">
                 <div class="d-flex justify-content-between align-items-center m-2">
                   <button class="btn btn-danger btn-img">
@@ -219,31 +257,23 @@
                   </button>
                 </div>
               </div>
-
-
-
-              <div class="card-body">
+              <div class="card-body flex-grow-1">
                 <h3 class="card-title" th:text="${article.title}"></h3>
                 <p class="card-text text-muted">Published on: <span
-                    th:text="${#temporals.format(article.article_date, 'dd/MM/yyyy')}"></span></p>
+                    th:text="${#temporals.format(article.articleDate, 'dd/MM/yyyy')}"></span></p>
                 <span class="badge badge-cat_inArt" th:text="${article.category.name}"></span>
-                <p class="card-text mt-2"
+                <p class="card-text mt-3 mb-5"
                   th:text="${article.body.length() > 100 ? #strings.substring(article.body, 0, 100) + '...' : article.body}">
                 </p>
-                <div class="d-flex align-items-end flex-column">
-                  <a th:href="@{'/home/article/' + ${article.id}}" class="btn badge-cat">Read more</a>
-                </div>
               </div>
+              <a th:href="@{'/home/article/' + ${article.id}}"
+                class="btn badge-cat position-absolute bottom-0 end-0 m-0">Read more</a>
             </div>
-
           </div>
         </div>
       </div>
     </div>
   </main>
-
-  <footer>
-  </footer>
 
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
@@ -253,8 +283,8 @@
   <!-- Modal -->
   <div th:each="article : ${list}">
     <div class="modal fade" th:id="'imageModal' + ${article.id}" aria-labelledby="imageModalLabel" aria-hidden="true"
-      data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" style="width: 1000px;">
-      <div class="modal-dialog modal-dialog-centered">
+      data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+      <div class="modal-dialog modal-dialog-centered custom-modal">
         <div class="modal-content pb-5 border-0">
           <div class="modal-header border-0">
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>

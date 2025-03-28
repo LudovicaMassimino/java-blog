@@ -1,8 +1,10 @@
 package it.ludo.model;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Optional;
 
+import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
@@ -18,6 +20,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "ARTICLE")
@@ -36,7 +39,11 @@ public class Article {
     private String body;
 
     @Column(nullable = false)
-    private LocalDate article_date;
+    private LocalDate articleDate;
+
+    @Column(nullable = false, updatable = false)
+    @CreationTimestamp
+    private LocalDateTime createdAt;
 
     @Column(nullable = false)
     private String image;
@@ -48,6 +55,7 @@ public class Article {
     @JoinColumn(name = "author_id", referencedColumnName = "id")
     private User author;
 
+    @NotNull(message = "Campo Obbligatorio")
     @ManyToOne
     @JoinColumn(name = "category_id", nullable = false)
     @JsonBackReference
@@ -92,12 +100,20 @@ public class Article {
         this.body = body;
     }
 
-    public LocalDate getArticle_date() {
-        return article_date;
+    public LocalDate getArticleDate() {
+        return articleDate;
     }
 
-    public void setArticle_date(LocalDate article_date) {
-        this.article_date = article_date;
+    public void setArticleDate(LocalDate articleDate) {
+        this.articleDate = articleDate;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 
     public String getImage() {
