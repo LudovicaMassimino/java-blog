@@ -179,44 +179,78 @@
       <div class="row align-items-start w-100 mb-5">
 
         <!-- Carousel -->
-        <div class="col-md-8 d-flex justify-content-start col-carousel">
-          <div id="carouselExampleAutoplaying" class="carousel slide carousel-fade mb-5" data-bs-ride="carousel"
-            data-bs-interval="3000">
-            <div class="carousel-indicators">
-              <button type="button" data-bs-target="#carouselExampleAutoplaying" th:each="article, iterStat : ${list}"
-                th:attr="data-bs-slide-to=${iterStat.index}, 
+        <!-- se nessuno è autenticato -->
+        <th:block sec:authorize="!isAuthenticated()">
+          <div class="col-md-8 d-flex justify-content-start">
+            <div id="carouselExampleAutoplaying" class="carousel slide carousel-fade mb-5" data-bs-ride="carousel"
+              data-bs-interval="3000">
+              <div class="carousel-indicators">
+                <button type="button" data-bs-target="#carouselExampleAutoplaying" th:each="article, iterStat : ${list}"
+                  th:attr="data-bs-slide-to=${iterStat.index}, 
                    aria-current=${iterStat.index == 0} ? 'true' : null,
                    aria-label='Slide ' + (${iterStat.index + 1})"
-                th:classappend="${iterStat.index == 0} ? ' active' : ''">
-              </button>
-            </div>
-            <div class="carousel-inner">
-              <div th:each="article, iterStat : ${list}" th:classappend="${iterStat.index == 0} ? ' active' : ''"
-                class="carousel-item bg-black">
-                <div class="carousel-caption position-absolute top-0 bottom-auto d-none d-md-block"
-                  style="z-index: 10;">
-                  <h1 th:text="${article.title}"></h1>
+                  th:classappend="${iterStat.index == 0} ? ' active' : ''">
+                </button>
+              </div>
+              <div class="carousel-inner">
+                <div th:each="article, iterStat : ${list}" th:classappend="${iterStat.index == 0} ? ' active' : ''"
+                  class="carousel-item bg-black">
+                  <div class="carousel-caption position-absolute top-0 bottom-auto d-none d-md-block"
+                    style="z-index: 10;">
+                    <h1 th:text="${article.title}"></h1>
+                  </div>
+                  <img
+                    th:src="${#strings.startsWith(article.image, 'uploads/') ? '/' + article.image : '/img/' + article.image}"
+                    class="d-block" style="opacity: 1.5;" alt="Article image">
                 </div>
-                <img
-                  th:src="${#strings.startsWith(article.image, 'uploads/') ? '/' + article.image : '/img/' + article.image}"
-                  class="d-block w-100" style="opacity: 1.5;" alt="Article image">
               </div>
             </div>
           </div>
-        </div>
+        </th:block>
 
-        <!-- Card di registrazione -->
-        <div class="col-md-4 d-flex justify-content-end">
-          <div class="card modern-card card-register shadow-lg py-5 px-5 text-center">
-            <div class="card-text">
-              <h3 class="fs-2 mb-5">Want to share your article with us?</h3>
-              <p class="fs-4">Join our community and let the world hear your ideas!</p>
-            </div>
-            <div class="d-flex justify-content-center mt-5">
-              <a href="" class="btn badge-cat btn-register">Sign up here!</a>
+        <!-- se qulcuno è autenticato  -->
+        <th:block sec:authorize="isAuthenticated()">
+          <div class="d-flex justify-content-center my-5 col-md-8 mx-auto">
+            <div id="carouselExampleAutoplaying" class="carousel slide carousel-fade mb-5" data-bs-ride="carousel"
+              data-bs-interval="3000">
+              <div class="carousel-indicators">
+                <button type="button" data-bs-target="#carouselExampleAutoplaying" th:each="article, iterStat : ${list}"
+                  th:attr="data-bs-slide-to=${iterStat.index}, 
+                     aria-current=${iterStat.index == 0} ? 'true' : null,
+                     aria-label='Slide ' + (${iterStat.index + 1})"
+                  th:classappend="${iterStat.index == 0} ? ' active' : ''">
+                </button>
+              </div>
+              <div class="carousel-inner">
+                <div th:each="article, iterStat : ${list}" th:classappend="${iterStat.index == 0} ? ' active' : ''"
+                  class="carousel-item bg-black">
+                  <div class="carousel-caption position-absolute top-0 bottom-auto d-none d-md-block"
+                    style="z-index: 10;">
+                    <h1 th:text="${article.title}"></h1>
+                  </div>
+                  <img
+                    th:src="${#strings.startsWith(article.image, 'uploads/') ? '/' + article.image : '/img/' + article.image}"
+                    class="d-block" style="opacity: 1.5;" alt="Article image">
+                </div>
+              </div>
             </div>
           </div>
-        </div>
+        </th:block>
+
+        <!-- Card di registrazione se nessuno è autenticato -->
+        <th:block sec:authorize="!isAuthenticated()">
+          <div class="col-md-4 d-flex justify-content-end">
+            <div class="card modern-card card-register shadow-lg py-5 px-5 text-center">
+              <div class="card-text">
+                <h3 class="fs-2 mb-5">Want to share your article with us?</h3>
+                <p class="fs-4">Join our community and let the world hear your ideas!</p>
+              </div>
+              <div class="d-flex justify-content-center mt-5">
+                <a href="" class="btn badge-cat btn-register">Sign up here!</a>
+              </div>
+            </div>
+          </div>
+        </th:block>
       </div>
 
       <!-- Filter Categories -->
@@ -292,7 +326,7 @@
           <div class="modal-body text-center">
             <img
               th:src="${#strings.startsWith(article.image, 'uploads/') ? '/' + article.image : '/img/' + article.image}"
-              class="img-fluid img-modal" alt="Article Image">
+              class="img-modal" alt="Article Image">
           </div>
         </div>
       </div>

@@ -147,7 +147,7 @@
                 <!-- CATEGORIE -->
 
                 <!-- col sx -->
-                <div class="col-12 col-lg-10">
+                <div class="col-12 col-xl-10">
                     <div class="d-flex align-items-center justify-content-start">
                         <h5 class="me-3 mb-0 filter-cat">Filter Categories:</h5>
                         <a class="badge badge-cat me-1" th:classappend="${selectedCategory == null} ? 'selected' : ''"
@@ -165,8 +165,8 @@
                     </div>
                 </div>
                 <!-- col dx -->
-                <div class="col-12 col-lg-2 d-flex align-items-center justify-content-lg-end">
-                    <div class="mt-5 mt-lg-0 position-relative">
+                <div class="col-12 col-xl-2 d-flex align-items-center justify-content-xl-end">
+                    <div class="mt-5 mt-xl-0 position-relative">
                         <form id="categoryForm" class="d-inline-flex input-group" style="flex-wrap: nowrap;"
                             method="POST" th:action="@{/dashboard/admin}">
                             <input class="input-cat" type="text" name="newCategory" placeholder="New category name"
@@ -263,7 +263,7 @@
                                             data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
                                             aria-labelledby="staticBackdropLabel" aria-hidden="true">
                                             <div class="modal-dialog">
-                                                <div class="modal-content">
+                                                <div class="modal-content text-dark">
                                                     <div class="modal-header">
                                                         <h1 class="modal-title fs-5" id="staticBackdropLabel">
                                                             Attenzione
@@ -277,6 +277,7 @@
                                                     <div class="modal-footer">
                                                         <form th:action="@{'/article/{id}/delete'(id=${article.id})}"
                                                             method="post">
+                                                            <input type="hidden" name="_method" value="DELETE">
                                                             <button type="button" class="btn btn-secondary"
                                                                 data-bs-dismiss="modal">Annulla</button>
                                                             <button type="submit" class="btn btn-danger">Conferma ed
