@@ -12,10 +12,12 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -172,7 +174,7 @@ public class CrudArticleController {
         return "dashboard/dash_update";
     }
 
-    @PostMapping("/article/{id}/update")
+    @PutMapping("/article/{id}/update")
     public String Update(@PathVariable("id") Integer id, @Valid @ModelAttribute("article") Article articleForm,
             BindingResult bindingresult, @RequestParam("imageFile") MultipartFile imageFile,
             Model model) {
@@ -213,7 +215,7 @@ public class CrudArticleController {
         return "redirect:/dashboard/admin";
     }
 
-    @PostMapping("/article/{id}/delete")
+    @DeleteMapping("/article/{id}/delete")
     public String delete(@PathVariable("id") Integer id) {
         try {
             articleService.deleteArticle(id); // Usa ArticleService

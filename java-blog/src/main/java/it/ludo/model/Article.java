@@ -17,6 +17,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OrderBy;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 import jakarta.validation.constraints.NotBlank;
@@ -43,6 +44,7 @@ public class Article {
 
     @Column(nullable = false, updatable = false)
     @CreationTimestamp
+    @OrderBy("createdAt DESC")
     private LocalDateTime createdAt;
 
     @Column(nullable = false)
