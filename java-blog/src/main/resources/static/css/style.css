@@ -172,7 +172,8 @@ html {
 
 /* ------------------------------------------ */
 
-html, body {
+html,
+body {
     height: 100%;
     margin: 0;
     padding: 0;
@@ -612,7 +613,30 @@ main {
 }
 
 .custom-modal {
+    width: 100vw;
+    height: calc(100vh - 100px);
+    margin-top: 100px;
+    max-width: none;
+    --bs-modal-bg: rgba(45, 58, 79, 0.498);
+    backdrop-filter: blur(50px);
+    display: flex;
+    justify-content: center;
+    align-items: start;
+}
+
+.card-modal {
     max-width: 1000px;
+    height: auto;
+    margin: 150px;
+    background: rgba(45, 58, 79, 0.498);
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(10px);
+    color: #c6dffd;
+}
+
+.btn-close {
+    --bs-btn-close-opacity: 1 !important;
+    stop-opacity: var(--bs-btn-close-opacity);
 }
 
 .container-profile {
@@ -638,15 +662,17 @@ main {
 }
 
 .carousel-inner {
-    height: 100%; /* Assicura che l'altezza dell'inner del carosello sia quella del carosello */
+    height: 100%;
+    /* Assicura che l'altezza dell'inner del carosello sia quella del carosello */
 }
 
 .carousel-item img {
-    width: 100%;  
-    height: 100%; 
-    object-fit: cover; 
-    object-position: center; 
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
 }
+
 .carousel-indicators [data-bs-target] {
     width: 20px;
     height: 20px;
@@ -655,17 +681,16 @@ main {
     margin: 0 10px;
 }
 
-.card-register {
-    background: #2d3a4f7f;
+.card-signUp {
+    background: rgba(45, 58, 79, 0.498);
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
     backdrop-filter: blur(10px);
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     color: #c6dffd;
     width: 300px;
-    height: auto;
+    padding: 20px 0;
 }
 
-.btn-register {
+.btn-signUp {
     width: 60%;
     font-weight: bold;
     font-size: larger;

@@ -129,7 +129,8 @@
                       </div>
                       <div class="d-flex justify-content-center">
                         <button type="submit"
-                          class="d-flex justify-content-center rounded btn btn-outline-custom my-5 w-60">Login</button>
+                          class="d-flex justify-content-center rounded btn btn-outline-custom mt-5 w-60">Sign
+                          in!</button>
                       </div>
                     </form>
                   </li>
@@ -173,16 +174,17 @@
 
   <main>
 
+    <!-- container principale della home -->
     <div class="container container-home d-flex flex-column justify-content-center align-items-center">
 
       <!-- HERO SECTION -->
-      <div class="row align-items-start w-100 mb-5">
+      <div class="row align-items-center w-100 mb-5">
 
         <!-- Carousel -->
         <!-- se nessuno è autenticato -->
         <th:block sec:authorize="!isAuthenticated()">
           <div class="col-md-8 d-flex justify-content-start">
-            <div id="carouselExampleAutoplaying" class="carousel slide carousel-fade mb-5" data-bs-ride="carousel"
+            <div id="carouselExampleAutoplaying" class="carousel slide carousel-fade" data-bs-ride="carousel"
               data-bs-interval="3000">
               <div class="carousel-indicators">
                 <button type="button" data-bs-target="#carouselExampleAutoplaying" th:each="article, iterStat : ${list}"
@@ -240,13 +242,16 @@
         <!-- Card di registrazione se nessuno è autenticato -->
         <th:block sec:authorize="!isAuthenticated()">
           <div class="col-md-4 d-flex justify-content-end">
-            <div class="card modern-card card-register shadow-lg py-5 px-5 text-center">
+            <div class="card modern-card card-signUp shadow-lg px-5 text-center">
               <div class="card-text">
                 <h3 class="fs-2 mb-5">Want to share your article with us?</h3>
                 <p class="fs-4">Join our community and let the world hear your ideas!</p>
               </div>
               <div class="d-flex justify-content-center mt-5">
-                <a href="" class="btn badge-cat btn-register">Sign up here!</a>
+                <button type="button" class="btn badge-cat btn-singUp" data-bs-toggle="modal"
+                  data-bs-target="#signUpModal">
+                  Sign up here!
+                </button>
               </div>
             </div>
           </div>
@@ -314,7 +319,58 @@
     integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
     crossorigin="anonymous"></script>
 
-  <!-- Modal -->
+  <!-- Modal Registrazione -->
+  <div class="modal fade" id="signUpModal" tabindex="-1" aria-labelledby="signUpModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered custom-modal">
+      <div class="modal-content card card-modal rounded-4 p-4">
+
+        <!-- Header -->
+        <div class="modal-header border-0 d-flex align-items-center position-relative pb-0">
+          <p class="modal-title fs-1 fw-bold w-100 text-center" id="signUpModalLabel">Create your account</p>
+          <button type="button" class="btn-close position-absolute top-0 end-0" data-bs-dismiss="modal"
+            aria-label="Close"></button>
+        </div>
+
+        <!-- Body -->
+        <form id="signUpForm" th:action="@{/home/signup}" class="stile-form">
+          <div class="modal-body pb-0" id="formContainer">
+            <div class="mt-3 fs-3">
+              <label for="username" class="form-label">Username</label>
+              <input type="text" class="form-control" id="username" name="username" required />
+            </div>
+            <div class="mt-3 fs-3 fw-bold">
+              <label for="password" class="form-label">Password</label>
+              <input type="password" class="form-control" id="password" name="password" required />
+            </div>
+          </div>
+
+          <!-- Footer con bottone attaccato in basso -->
+          <div class="modal-footer border-0 pt-5 pb-0 d-flex justify-content-center">
+            <button type="submit" class="btn btn-outline-custom rounded fs-4 w-60">Sign up!</button>
+          </div>
+        </form>
+
+        <!-- Success/Errore Message + GIF -->
+        <div id="messageContainer" class="d-none text-center">
+          <img id="statusGif" class="w-50 mx-auto mb-4" src="" alt="Status Gif" />
+          <div id="successMessage" class="alert alert-success d-none">
+            <p class="mt-3 fs-5 fw-bold">You've successfully registered!</p>
+            <p class="mt-3 fs-2 fw-bold">Welcome to Coding Café</p>
+            <p class="mt-3 fs-3 fw-bold">Now it's your turn to share your articles and let the world hear your ideas!
+            </p>
+          </div>
+          <div id="errorMessage" class="alert alert-danger d-none">
+            <p class="mt-3 fs-3 fw-bold">Errore: Username already exists!</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+
+
+  <!-- Modal zoom immagine -->
   <div th:each="article : ${list}">
     <div class="modal fade" th:id="'imageModal' + ${article.id}" aria-labelledby="imageModalLabel" aria-hidden="true"
       data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
@@ -332,6 +388,57 @@
       </div>
     </div>
   </div>
+
+
+  <script>
+    document.getElementById('signUpForm').addEventListener('submit', function (e) {
+      e.preventDefault(); // blocca l'invio classico
+
+      const formData = new FormData(this);
+
+      fetch(this.getAttribute('action'), {
+        method: 'POST',
+        body: formData
+      })
+        .then(response => {
+          if (response.ok) {
+            // supponiamo che il server restituisca 200 ok per successo
+            showResult(true);
+          } else {
+            // altrimenti errore
+            showResult(false);
+          }
+        })
+        .catch(error => {
+          console.error('Errore di rete:', error);
+          showResult(false);
+        });
+    });
+
+    function showResult(isSuccess) { // Nascondi il form
+      document.getElementById('signUpForm').classList.add('d-none');
+
+      // Mostra il container del messaggio
+      const messageContainer = document.getElementById('messageContainer');
+      messageContainer.classList.remove('d-none');
+
+      // Gestisci GIF e messaggi
+      const statusGif = document.getElementById('statusGif');
+      const successMessage = document.getElementById('successMessage');
+      const errorMessage = document.getElementById('errorMessage');
+
+      if (isSuccess) {
+        statusGif.src = '/img/signUpSuccess.gif'; // GIF successo
+        successMessage.classList.remove('d-none');
+        errorMessage.classList.add('d-none');
+      } else {
+        statusGif.src = '/img/signUpError.gif'; // GIF errore
+        successMessage.classList.add('d-none');
+        errorMessage.classList.remove('d-none');
+      }
+    }
+  </script>
+
 
 </body>
 
