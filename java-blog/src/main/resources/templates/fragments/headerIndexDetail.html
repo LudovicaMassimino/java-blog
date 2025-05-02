@@ -1,0 +1,169 @@
+<!-- headerIndexDetail.html -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+    <!-- Questo è il fragment chiamato 'siteHeaderIndexDetail' -->
+    <div th:fragment="siteHeaderIndexDetail">
+        <header class="sticky-top">
+            <nav class="navbar navbar-expand-lg">
+              <div class="container-fluid">
+                <!-- Riga principale: contiene la parte sinistra (toggler, logo, menu desktop) e la parte destra (dropdown login) -->
+                <div class="d-flex w-100 align-items-center justify-content-between">
+                  <!-- Sezione sinistra: toggler (mobile), logo e menu desktop -->
+                  <div class="d-flex align-items-center">
+                    <!-- Bottone toggler: visibile solo in mobile -->
+                    <th:block sec:authorize="isAuthenticated()">
+                      <th:block sec:authorize="hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')">
+                        <button class="navbar-toggler d-lg-none me-2" type="button" data-bs-toggle="offcanvas"
+                          data-bs-target="#navbarNavMobile" aria-controls="navbarNavMobile" aria-expanded="false"
+                          aria-label="Toggle navigation">
+                          <span class="navbar-toggler-icon"></span>
+                        </button>
+                      </th:block>
+                    </th:block>
+                    <!-- Logo: sempre visibile -->
+                    <a class="navbar-brand ms-4" th:href="@{/home}"
+                      th:classappend="${#authorization.expression('isAuthenticated()') ? ' centered-logo' :''}">
+                      <div class="logo-wrapper">
+                        <img th:src="@{/img/LogoWorld.png}" alt="Logo" class="navbar-logo" width="80" />
+                      </div>
+                    </a>
+                    <!-- Menu Desktop: visibile solo su dispositivi lg e superiori -->
+                    <th:block sec:authorize="isAuthenticated()">
+                      <th:block sec:authorize="hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')">
+                        <div class="collapse navbar-collapse d-none d-lg-block" id="navbarNavDesktop">
+                          <ul class="navbar-nav ms-3">
+                            <li class="nav-item">
+                              <a class="nav-link active btn btn-nav me-2 fw-bold" th:href="@{/home}" role="button">
+                                Home
+                              </a>
+                            </li>
+                            <li>
+                              <a class="nav-link active btn btn-nav me-2 fw-bold" th:href="@{/dashboard/create}" role="button">
+                                New Post
+                              </a>
+                            </li>
+                            <li class="nav-item">
+                              <a class="nav-link active btn btn-nav me-2 fw-bold" th:href="@{/dashboard/admin}" role="button">
+                                Dashboard
+                              </a>
+                            </li>
+                          </ul>
+                        </div>
+                      </th:block>
+                    </th:block>
+                  </div>
+                  <!-- Sezione destra: dropdown per il login -->
+                  <div class="d-flex align-items-center">
+                    <div class="dropdown">
+                      <th:block sec:authorize="isAuthenticated()">
+                        <th:block sec:authorize="hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')">
+                          <button class="btn btn-logged dropdown-toggle d-flex align-items-center me-4" type="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            <img th:src="${user != null and user.photoProfile != null 
+                                    ? (#strings.startsWith(user.photoProfile, 'uploads/') 
+                                         ? '/' + user.photoProfile 
+                                         : '/img/' + user.photoProfile)
+                                    : '/img/defaultPhotoProfile.png'}" alt="Foto profilo" class="photo-btn me-2">
+                            <div class="text-end">
+                              <span class="light-text">Logged in as</span><br>
+                              <span class="text-user"
+                                th:text="${#strings.toUpperCase(loggedUser.substring(0,1)) + loggedUser.substring(1)}">
+                              </span>
+                            </div>
+                          </button>
+                          <ul class="dropdown-menu dropdown-menu-end">
+                            <li class="dropdown-item text-center">
+                              <img th:src="${user != null and user.photoProfile != null 
+                                      ? (#strings.startsWith(user.photoProfile, 'uploads/') 
+                                           ? '/' + user.photoProfile 
+                                           : '/img/' + user.photoProfile)
+                                      : '/img/defaultPhotoProfile.png'}" alt="Foto profilo" class="photo-btn me-2"
+                                style="width: 100px; height: 100px;">
+                            </li>
+                            <li>
+                              <a class="dropdown-item my-2 fs-5 mt-3" th:href="@{/profile}">Profile</a>
+                            </li>
+                            <li>
+                              <a class="dropdown-item my-2 fs-5 mt-3" th:href="@{/dashboard/admin}">Dashboard</a>
+                            </li>
+                            <form th:action="@{/logout}" method="post">
+                              <button type="submit" class="dropdown-item my-2 fs-5 mt-3">Logout</button>
+                            </form>
+                            </li>
+                          </ul>
+                        </th:block>
+                      </th:block>
+                      <th:block sec:authorize="!isAuthenticated()">
+                        <!-- Se nessuno è loggato, mostra il pulsante di login -->
+                        <button class="btn btn-login dropdown-toggle fs-5 me-4" type="button" data-bs-toggle="dropdown"
+                          aria-expanded="false">
+                          Login
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                          <li class="dropdown-item">
+                            <form th:action="@{/authentication}" method="post">
+                              <div class="form-group stile-form">
+                                <label for="username">Username</label>
+                                <input type="text" class="form-control mb-3 input-usn" id="username" name="username"
+                                  placeholder="username" required>
+                              </div>
+                              <div class="form-group stile-form">
+                                <label for="password">Password</label>
+                                <div class="position-relative">
+                                  <input type="password" class="form-control input-psw" id="password" name="password"
+                                    placeholder="password" required>
+                                  <i class="bi bi-eye-slash position-absolute top-50 end-0 translate-middle-y me-3"
+                                    id="togglePasswordLogin" style="cursor: pointer; color: black;"></i>
+                                </div>
+                              </div>
+                              <div th:if="${param.error}">
+                                <p class="text-danger">Invalid username or password</p>
+                              </div>
+                              <div class="d-flex justify-content-center">
+                                <button type="submit"
+                                  class="d-flex justify-content-center rounded btn btn-outline-custom mt-5 w-60">Sign
+                                  in!
+                                </button>
+                              </div>
+                            </form>
+                          </li>
+                        </ul>
+                      </th:block>
+                    </div>
+                  </div>
+                </div>
+                <!-- Menu Mobile: visibile solo su dispositivi con larghezza inferiore a lg -->
+                <div class="offcanvas offcanvas-start" tabindex="-1" id="navbarNavMobile"
+                  aria-labelledby="offcanvasNavbarLabel">
+                  <div class="offcanvas-header" data-bs-theme="dark">
+                    <h4 class="offcanvas-title text-white fw-bold" id="offcanvasNavbarLabel">Menu</h4>
+                    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                  </div>
+                  <div class="offcanvas-body">
+                    <hr class="text-white-50">
+                    <ul class="navbar-nav">
+                      <li class="nav-item">
+                        <a class="nav-link nav-link-mobile active me-2 fs-5" th:href="@{/home}" role="button">
+                          Home
+                        </a>
+                      </li>
+                      <li class="nav-item">
+                        <a class="nav-link nav-link-mobile active me-2 fs-5" th:href="@{/dashboard/create}" role="button">
+                          Create New Post
+                        </a>
+                      </li>
+                      <li class="nav-item">
+                        <a class="nav-link nav-link-mobile active me-2 fs-5" th:href="@{/dashboard/admin}" role="button">
+                          Post Dashboard
+                        </a>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </nav>
+          </header>
+    </div>
+</body>
+</html>
