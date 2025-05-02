@@ -21,8 +21,8 @@ public class SecurityConfiguration {
                 .cors(cors -> cors.disable())
                 .authorizeHttpRequests(request -> request
 
-                        .requestMatchers( "/home/article/{id}", "/home", "/home/**", "/resources/**", "img/**",
-                                "uploads/**", "/css/**")
+                        .requestMatchers("/home/article/{id}", "/home", "/home/**", "/resources/**", "/img/**",
+                                "/uploads/**", "/js/**", "/css/**")
                         .permitAll()
                         .requestMatchers("/article/admin/**").hasRole("ADMIN")
                         .requestMatchers("/article/user/**").hasRole("USER")
