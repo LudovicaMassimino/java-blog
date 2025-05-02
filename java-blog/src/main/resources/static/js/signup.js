@@ -66,5 +66,4 @@ document.addEventListener('DOMContentLoaded', function () {
             this.classList.toggle('bi-eye-slash');
         });
     }
-
 });
