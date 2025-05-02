@@ -1,8 +1,7 @@
-<!-- headerLogged.html -->
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+
 <body>
-    <!-- Questo è il fragment chiamato 'siteHeaderLogged' -->
     <div th:fragment="siteHeaderLogged">
         <header class="sticky-top">
             <nav class="navbar navbar-expand-lg">
@@ -31,14 +30,14 @@
                                         </a>
                                     </li>
                                     <li>
-                                        <a class="nav-link active btn btn-nav me-2 fw-bold" th:href="@{/dashboard/create}"
-                                            role="button">
+                                        <a class="nav-link active btn btn-nav me-2 fw-bold"
+                                            th:href="@{/dashboard/create}" role="button">
                                             New Post
                                         </a>
                                     </li>
                                     <li class="nav-item">
-                                        <a class="nav-link active btn btn-nav me-2 fw-bold" th:href="@{/dashboard/admin}"
-                                            role="button">
+                                        <a class="nav-link active btn btn-nav me-2 fw-bold"
+                                            th:href="@{/dashboard/admin}" role="button">
                                             Dashboard
                                         </a>
                                     </li>
@@ -74,7 +73,8 @@
                                                     style="width: 100px; height: 100px;">
                                             </li>
                                             <li>
-                                                <a class="dropdown-item my-2 fs-5 mt-3" th:href="@{/profile}">Profile</a>
+                                                <a class="dropdown-item my-2 fs-5 mt-3"
+                                                    th:href="@{/profile}">Profile</a>
                                             </li>
                                             <li>
                                                 <a class="dropdown-item my-2 fs-5 mt-3"
@@ -97,13 +97,15 @@
                         aria-labelledby="offcanvasNavbarLabel">
                         <div class="offcanvas-header" data-bs-theme="dark">
                             <h4 class="offcanvas-title text-white fw-bold" id="offcanvasNavbarLabel">Menu</h4>
-                            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                            <button type="button" class="btn-close" data-bs-dismiss="offcanvas"
+                                aria-label="Close"></button>
                         </div>
                         <div class="offcanvas-body">
                             <hr class="text-white-50">
                             <ul class="navbar-nav">
                                 <li class="nav-item">
-                                    <a class="nav-link nav-link-mobile active me-2 fs-5" th:href="@{/home}" role="button">
+                                    <a class="nav-link nav-link-mobile active me-2 fs-5" th:href="@{/home}"
+                                        role="button">
                                         Home
                                     </a>
                                 </li>
@@ -127,4 +129,5 @@
         </header>
     </div>
 </body>
+
 </html>
