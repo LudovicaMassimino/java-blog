@@ -17,7 +17,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import it.ludo.exception.ArticleNotFoundException;
+import it.ludo.mapper.ArticleMapper;
 import it.ludo.model.Article;
+import it.ludo.model.ArticleDTO;
+import it.ludo.model.Category;
+import it.ludo.model.User;
+import it.ludo.repository.CategoryRepo;
+import it.ludo.repository.UserRepo;
 import it.ludo.response.Payload;
 import it.ludo.service.ArticleService;
 
@@ -29,6 +35,12 @@ public class ArticleRestController {
 
     @Autowired
     private ArticleService articleService;
+
+    @Autowired
+    private UserRepo userRepo;
+
+    @Autowired
+    private CategoryRepo categoryRepo;
 
     @GetMapping
     public ResponseEntity<Payload<List<Article>>> getAllArticles() {
@@ -64,12 +76,25 @@ public class ArticleRestController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Payload<Article>> updateArticle(@PathVariable Integer id, @RequestBody Article article) {
+    public ResponseEntity<Payload<ArticleDTO>> updateArticle(@PathVariable Integer id, @RequestBody ArticleDTO dto) {
         try {
-            Article existing = articleService.getArticleById(id); // verifica che esista l'articolo
-            article.setId(existing.getId()); // imposta ID corretto
-            Article updated = articleService.saveArticle(article);
-            return ResponseEntity.ok(new Payload<>(updated, null, HttpStatus.OK));
+            Article existing = articleService.getArticleById(id); // per validare che esista
+
+            User author = userRepo.findById(dto.getAuthorId())
+                    .orElseThrow(() -> new RuntimeException("User non trovato"));
+            Category category = categoryRepo.findById(dto.getCategoryId())
+                    .orElseThrow(() -> new RuntimeException("Category non trovata"));
+
+            // mappa il DTO ad Entity
+            Article articleToUpdate = ArticleMapper.toEntity(dto, author, category);
+            articleToUpdate.setId(existing.getId()); // sicuro!
+
+            Article updated = articleService.saveArticle(articleToUpdate);
+
+            // ritorna DTO aggiornato
+            ArticleDTO responseDto = ArticleMapper.toDto(updated);
+            return ResponseEntity.ok(new Payload<>(responseDto, null, HttpStatus.OK));
+
         } catch (ArticleNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new Payload<>(null, "Articolo non trovato per l'aggiornamento", HttpStatus.NOT_FOUND));
