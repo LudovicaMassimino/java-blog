@@ -55,6 +55,7 @@ public class Article {
 
     @ManyToOne
     @JoinColumn(name = "author_id", referencedColumnName = "id")
+    @JsonBackReference
     private User author;
 
     @NotNull(message = "Campo Obbligatorio")

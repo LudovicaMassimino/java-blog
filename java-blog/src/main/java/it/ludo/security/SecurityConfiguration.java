@@ -4,6 +4,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
@@ -28,11 +29,13 @@ public class SecurityConfiguration {
                         .requestMatchers("/article/user/**").hasRole("USER")
                         .requestMatchers("/dashboard/admin", "/user/**").hasAnyRole("USER", "ADMIN")
                         .requestMatchers("/article/{id}/**").hasAnyRole("ADMIN", "USER")
+                        .requestMatchers("/api/**").authenticated()
                         .anyRequest().authenticated())
                 .formLogin(login -> login
                         .loginProcessingUrl("/authentication") // URL di elaborazione del login
                         .defaultSuccessUrl("/home", true)
                         .permitAll())
+                .httpBasic(Customizer.withDefaults())
                 .logout(logout -> logout
                         .logoutUrl("/logout")
                         .logoutSuccessUrl("/home")
