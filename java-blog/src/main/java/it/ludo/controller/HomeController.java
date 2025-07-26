@@ -36,6 +36,8 @@ public class HomeController {
     public String home(@RequestParam(name = "category", required = false) String category, Model model,
             Principal principal) {
 
+        System.out.println(">>> Accesso a /home avvenuto");
+
         // Verifica che il Principal non sia null
         if (principal != null) {
             String username = principal.getName();

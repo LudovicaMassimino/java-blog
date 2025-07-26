@@ -10,12 +10,12 @@ public class ExceptionHandlingController {
 
     @ExceptionHandler(UsernameNotFoundException.class)
     public String handleUsernameNotFound() {
-        return "/home/index"; // Ritorna la pagina di login
+        return "redirect:/login?error=usernotfound";
     }
 
     @ExceptionHandler(AuthenticationException.class)
     public String handleAuthenticationException() {
-        return "/home/index"; // Gestisci errori di autenticazione
+        return "redirect:/login?error=auth";
     }
 
     @ExceptionHandler(Exception.class)

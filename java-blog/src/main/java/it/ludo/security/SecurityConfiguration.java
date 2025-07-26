@@ -22,8 +22,8 @@ public class SecurityConfiguration {
                 .cors(cors -> cors.disable())
                 .authorizeHttpRequests(request -> request
 
-                        .requestMatchers("/home/article/{id}", "/home", "/home/**", "/resources/**", "/img/**",
-                                "/uploads/**", "/js/**", "/css/**")
+                        .requestMatchers("/home", "/home/**", "/resources/**", "/img/**", "/uploads/**", "/js/**",
+                                "/css/**")
                         .permitAll()
                         .requestMatchers("/article/admin/**").hasRole("ADMIN")
                         .requestMatchers("/article/user/**").hasRole("USER")
@@ -32,9 +32,11 @@ public class SecurityConfiguration {
                         .requestMatchers("/api/**").authenticated()
                         .anyRequest().authenticated())
                 .formLogin(login -> login
-                        .loginProcessingUrl("/authentication") // URL di elaborazione del login
-                        .defaultSuccessUrl("/home", true)
+                        .loginPage("/login") // mostra login.html
+                        .loginProcessingUrl("/authentication") // Spring gestisce l'autenticazione POST
+                        .defaultSuccessUrl("/home") // rimuovi il true
                         .permitAll())
+
                 .httpBasic(Customizer.withDefaults())
                 .logout(logout -> logout
                         .logoutUrl("/logout")
