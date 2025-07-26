@@ -1,4 +1,4 @@
-package it.ludo;
+package it.ludo.javablog;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

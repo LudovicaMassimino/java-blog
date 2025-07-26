@@ -93,21 +93,12 @@
 			</plugin>
 
 			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jar-plugin</artifactId>
-				<version>3.2.0</version>
-				<configuration>
-					<archive>
-						<manifest>
-							<mainClass>it.ludo.javablog.JavaBlogApplication</mainClass>
-						</manifest>
-					</archive>
-				</configuration>
-			</plugin>
-			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
-				<version>3.2.5</version> <!-- o la tua versione di Spring Boot -->
+				<version>3.3.2</version> <!-- allinea con la versione spring boot parent -->
+				<configuration>
+					<mainClass>it.ludo.javablog.JavaBlogApplication</mainClass>
+				</configuration>
 				<executions>
 					<execution>
 						<goals>
