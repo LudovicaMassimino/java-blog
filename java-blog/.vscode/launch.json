@@ -5,9 +5,9 @@
             "name": "Spring Boot-JavaBlogApplication<java-blog>",
             "request": "launch",
             "cwd": "${workspaceFolder}",
-            "mainClass": "it.ludo.JavaBlogApplication",
+            "mainClass": "it.ludo.javablog.JavaBlogApplication",
             "projectName": "java-blog",
-            "args": "",
+            "args": "--spring.profiles.active=local",
             "envFile": "${workspaceFolder}/.env"
         }
     ]
