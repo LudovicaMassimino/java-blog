@@ -97,7 +97,7 @@
 				<artifactId>spring-boot-maven-plugin</artifactId>
 				<version>3.3.2</version> <!-- allinea con la versione spring boot parent -->
 				<configuration>
-					<mainClass>it.ludo.javablog.JavaBlogApplication</mainClass>
+					<mainClass>it.ludo.JavaBlogApplication</mainClass>
 					<profiles>
 						<profile>local</profile>
 					</profiles>
