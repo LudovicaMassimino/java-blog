@@ -1,14 +1,14 @@
 {
+    "version": "0.2.0",
     "configurations": [
         {
             "type": "java",
-            "name": "Spring Boot-JavaBlogApplication<java-blog>",
+            "name": "Spring Boot–JavaBlogApplication<java-blog>",
             "request": "launch",
             "cwd": "${workspaceFolder}",
-            "mainClass": "it.ludo.javablog.JavaBlogApplication",
+            "mainClass": "it.ludo.JavaBlogApplication",
             "projectName": "java-blog",
-            "args": "--spring.profiles.active=local",
-            "envFile": "${workspaceFolder}/.env"
+            "args": "--spring.profiles.active=local"
         }
     ]
 }
