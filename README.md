@@ -37,9 +37,9 @@ Coding Café è una piattaforma di blogging pensata per sviluppatori:
 - Docker & Docker Compose  
 
 ## 🐳 Avvio con Docker
-git clone https://github.com/LudovicaMassimino/java-blog.git
-cd java-blog
-docker-compose up
+- git clone https://github.com/LudovicaMassimino/java-blog.git
+- cd java-blog
+- docker-compose up
 Una volta avviata, l'applicazione sarà disponibile su http://localhost:8080.
 
 
