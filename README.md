@@ -84,8 +84,8 @@ For testing purposes, you can log in with the following demo accounts:
 
 To start the entire application using Docker:
 Make sure Docker and Docker Compose are installed on your system.
-git clone https://github.com/LudovicaMassimino/java-blog.git
-cd java-blog
-docker-compose up
+- git clone https://github.com/LudovicaMassimino/java-blog.git
+- cd java-blog
+- docker-compose up
 Once started, the application will be available at http://localhost:8080.
 
